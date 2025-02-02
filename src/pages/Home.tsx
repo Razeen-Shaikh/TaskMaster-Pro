@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { signInWithGoogle } from "../firebase-config";
 import { GoogleLogin, TaskBuddy } from "../components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUser, setError } from "../redux/features/authSlice";
-import { RootState } from "../redux/store";
 
 const Home = () => {
     const navigate = useNavigate();
