@@ -1,0 +1,43 @@
+.task-list {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0;
+}
+
+.table-header {
+  display: contents;
+  font-weight: bold;
+}
+
+.table-header .table-cell {
+  border: none;
+  border-top: 1px solid #0000001a;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+  color: #00000099;
+}
+
+.table-body {
+  display: contents;
+}
+
+.table-row {
+  display: contents;
+  border-bottom: 1px solid #0000001a;
+}
+
+.table-cell {
+  padding: 0.5rem;
+  border-bottom: 1px solid #0000001a;
+}
+
+.table-cell:nth-child(5n + 1) {
+  grid-column: span 8;
+}
+
+.todo:last-child .table-cell:first-child {
+  border-bottom-left-radius: 12px;
+  margin-bottom: 3rem;
+}

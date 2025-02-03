@@ -6,16 +6,16 @@ interface TaskState {
     tasks: Task[];
     filteredTasks: Task[];
     sortedTasks: Task[];
-    loading: boolean;
-    error: string;
-    sortDirection: '' | 'asc' | 'desc';
+    isLoading: boolean;
+    error: string | null;
+    sortDirection: 'asc' | 'desc' | '';
 }
 
 const initialState: TaskState = {
     tasks: dummyTasks,
     filteredTasks: dummyTasks,
     sortedTasks: dummyTasks,
-    loading: false,
+    isLoading: false,
     error: "",
     sortDirection: '',
 };
