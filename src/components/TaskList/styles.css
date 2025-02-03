@@ -28,16 +28,117 @@
   border-bottom: 1px solid #0000001a;
 }
 
-.table-cell {
-  padding: 0.5rem;
+.table-body .table-cell {
+  padding: 1rem 0;
   border-bottom: 1px solid #0000001a;
+  background-color: #f1f1f1;
+}
+
+.table-body .table-cell:first-child {
+  padding-left: 1rem;
+}
+
+.table-body .table-row:first-child .table-cell {
+  padding: 0.5rem 0;
+  padding-left: 0.5rem;
+}
+
+.table-body .table-cell:last-child {
+  padding-right: 1rem;
 }
 
 .table-cell:nth-child(5n + 1) {
-  grid-column: span 8;
+  grid-column: span 9;
 }
 
 .todo:last-child .table-cell:first-child {
   border-bottom-left-radius: 12px;
   margin-bottom: 3rem;
+}
+
+.last-task .table-cell {
+  margin-bottom: 3rem;
+}
+
+.last-task .table-cell:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.last-task .table-cell:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.add-task-button {
+  border: none;
+  margin-inline-start: 3rem;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+}
+
+.table-body .table-row:nth-child(3) input {
+  border: none;
+  background-color: transparent;
+  margin-left: 3rem;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: start;
+}
+
+.table-body .table-row:nth-child(3) input:focus-visible {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #0000001a;
+}
+
+.add-task-button-container {
+  margin-top: 0.5rem;
+  margin-left: 3rem;
+}
+
+.add-button {
+  background-color: #7b1984;
+  border-radius: 60px;
+  color: #ffffff;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cancel-button {
+  background-color: #f4f4f4;
+  border-radius: 60px;
+  color: #000000;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.add-date-button {
+  border: 1px solid #00000033;
+  border-radius: 60px;
+  padding: 0.5rem 0.7rem;
+  font-family: Mulish;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: start;
+  color: #00000099;
+}
+
+.fa-plus-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #00000033;
 }
