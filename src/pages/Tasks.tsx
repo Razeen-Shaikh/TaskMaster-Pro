@@ -1,43 +1,37 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TaskBuddy, TaskList, TaskBoard, Logout, Select } from "../components";
 import { RootState } from "../redux/store";
 import { TiThMenuOutline } from "react-icons/ti";
 import { CiSearch, CiViewBoard } from "react-icons/ci";
-import { filterByCategory, filterByDueDate } from "../redux/features/taskSlice";
+import { setFilter } from "../redux/features/taskSlice";
 
 const Tasks = () => {
   const dispatch = useDispatch();
-  const {
-    user,
-    isLoading: userLoading,
-    error: userError,
-  } = useSelector((state: RootState) => state.auth);
-  const {
-    tasks,
-    isLoading: tasksLoading,
-    error: tasksError,
-  } = useSelector((state: RootState) => state.tasks);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { tasks } = useSelector((state: RootState) => state.tasks);
 
-  const [view, setView] = React.useState("list");
-  const [categories, setCategories] = React.useState<string[]>([]);
-  const [dueDates, setDueDates] = React.useState<string[]>([]);
+  const [view, setView] = useState("list");
+  const [categories, setCategories] = useState<string[]>([]);
+  const [dueDates, setDueDates] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [statuses, setStatuses] = useState<string[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCategories(
       Array.from(new Set(tasks?.map((task) => task.category))) || []
     );
+    setTags(Array.from(new Set(tasks?.map((task) => task.tags).flat())) || []);
     setDueDates(Array.from(new Set(tasks?.map((task) => task.dueDate))) || []);
+    setStatuses(Array.from(new Set(tasks?.map((task) => task.status))) || []);
   }, [tasks]);
 
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
-    dispatch(filterByCategory(event.target.value));
-
-  const handleDueDateChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
-    dispatch(filterByDueDate(event.target.value));
-
   const handleAddTask = () => {};
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    dispatch(setFilter({ [name]: value }));
+  };
 
   return (
     <div className="tasks-container">
@@ -45,7 +39,7 @@ const Tasks = () => {
         <TaskBuddy className="task-buddy" />
         <div className="profile">
           <div className="profile-icon">
-            <img src="https://s3-alpha-sig.figma.com/img/f549/15dc/fd930beee5a3918d920109c2020d3ccb?Expires=1739145600&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SDvbi-RchTbKshhPi~aGicQHU5zkqx4vtypacHGL~wFdXsg7eJkKEhgi-Xt~FWDd89zdnCgKINqtlTOuxJ3hS5in4a1qv0hRlILIzvi2ugtiEpcLWCN~V8zCutdS78UbVaajVLtwjaEIRk0ms-qFU3aaMoZ~CCi7j3pTPj5-QHLk4ca4JFj1tTWCHEU7TxYnKePiTU1ddEG92iUogUiCWAAMbBJIDpYOc6O2dgmeRp0nSFTDQd6F~HSkPEFA71pP6KNdwyIxpHM~AzHQoLlhfk6kqJaALtqIgKyEs4t40Oh32uB1To~QodrmGXbLS4Bf0j~uJZ7J74rI5wIUyUPpcw__" />
+            <img src={user?.photoURL || ""} alt="User's Picture" />
             <p>{user?.displayName || user?.email || "Guest"}</p>
           </div>
         </div>
@@ -72,8 +66,19 @@ const Tasks = () => {
       <div className="tasks-filters">
         <div className="filters">
           <p>Filter by:</p>
-          <Select data={categories} onChange={handleCategoryChange} />
-          <Select data={dueDates} onChange={handleDueDateChange} />
+          <Select
+            name="category"
+            title="Category"
+            data={categories}
+            onChange={handleChange}
+          />
+          <Select
+            name="dueDate"
+            title="DueDates"
+            data={dueDates}
+            onChange={handleChange}
+          />
+          <Select name="tag" title="Tags" data={tags} onChange={handleChange} />
         </div>
         <div className="search">
           <div className="search-bar">
@@ -83,7 +88,16 @@ const Tasks = () => {
           <button onClick={handleAddTask}>Add Task</button>
         </div>
       </div>
-      {view === "board" ? <TaskBoard /> : <TaskList />}
+      {view === "board" ? (
+        <TaskBoard />
+      ) : (
+        <TaskList
+          categories={categories}
+          dueDates={dueDates}
+          tags={tags}
+          statuses={statuses}
+        />
+      )}
     </div>
   );
 };

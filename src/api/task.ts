@@ -7,7 +7,7 @@ const dummyTasks: Task[] = [
         "description": "Finalize the React project and deploy to production.",
         "category": "Work",
         "dueDate": "2024-02-10",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "High",
         "tags": ["React", "Development"],
         "attachments": ["requirements.pdf"]
@@ -40,7 +40,7 @@ const dummyTasks: Task[] = [
         "description": "Create slides for the upcoming project review meeting.",
         "category": "Work",
         "dueDate": "2024-02-07",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "High",
         "tags": ["Presentation", "Work"],
         "attachments": ["slides.pptx"]
@@ -62,7 +62,7 @@ const dummyTasks: Task[] = [
         "description": "Investigate and resolve login issue in the web app.",
         "category": "Work",
         "dueDate": "2024-02-08",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "High",
         "tags": ["Bug Fix", "Development"],
         "attachments": ["bug_report.txt"]
@@ -106,7 +106,7 @@ const dummyTasks: Task[] = [
         "description": "Review client feedback and update the project plan.",
         "category": "Work",
         "dueDate": "2024-02-09",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "High",
         "tags": ["Client", "Feedback"],
         "attachments": ["client_notes.pdf"]
@@ -139,7 +139,7 @@ const dummyTasks: Task[] = [
         "description": "Complete React Router tutorial.",
         "category": "Education",
         "dueDate": "2024-02-14",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "Medium",
         "tags": ["Learning", "React"],
         "attachments": []
@@ -205,7 +205,7 @@ const dummyTasks: Task[] = [
         "description": "Add new projects to online portfolio.",
         "category": "Work",
         "dueDate": "2024-02-17",
-        "status": "In Progress",
+        "status": "In-Progress",
         "priority": "Medium",
         "tags": ["Career"],
         "attachments": []

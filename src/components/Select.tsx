@@ -1,13 +1,15 @@
 interface SelectProps {
+    name: string;
+    title: string;
     data: string[];
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export const Select: React.FC<SelectProps> = ({ data, onChange }) => {
+export const Select: React.FC<SelectProps> = ({ name, title, data, onChange }) => {
     return (
-        <select defaultValue={0} onChange={onChange}>
-            <option disabled value={0}>
-                Category
+        <select name={name} defaultValue="" onChange={onChange}>
+            <option disabled value="">
+                {title}
             </option>
             {data.map((value, key) => (
                 <option key={key} value={value}>
