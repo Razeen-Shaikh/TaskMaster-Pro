@@ -81,6 +81,14 @@ const taskSlice = createSlice({
     setSortDirection: (state, action: PayloadAction<"" | "asc" | "desc">) => {
       state.sortDirection = action.payload;
     },
+    updateTaskStatus: (
+      state,
+      action: PayloadAction<{ id: string; status: string }>
+    ) => {
+      const { id, status } = action.payload;
+      const index = state.filteredTasks.findIndex((task) => task.id === id);
+      if (index !== -1) state.filteredTasks[index].status = status;
+    },
   },
 });
 
@@ -92,5 +100,6 @@ export const {
   setFilter,
   sortTasks,
   setSortDirection,
+  updateTaskStatus,
 } = taskSlice.actions;
 export default taskSlice.reducer;

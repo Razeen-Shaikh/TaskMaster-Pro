@@ -91,12 +91,7 @@ const Tasks = () => {
       {view === "board" ? (
         <TaskBoard />
       ) : (
-        <TaskList
-          categories={categories}
-          dueDates={dueDates}
-          tags={tags}
-          statuses={statuses}
-        />
+        <TaskList categories={categories} statuses={statuses} />
       )}
     </div>
   );

@@ -1,0 +1,41 @@
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-button {
+  font-size: 24px;
+  padding: 10px;
+  border: 1px solid #7b198426;
+  background-color: transparent;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 12px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  display: block;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.fa-plus-container {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #00000033;
+  cursor: pointer;
+}
