@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BsThreeDots } from "react-icons/bs";
 import {
@@ -10,24 +10,23 @@ import {
   FaSortUp,
 } from "react-icons/fa";
 import { RxDragHandleDots2 } from "react-icons/rx";
-import { AiOutlineEnter } from "react-icons/ai";
-import { CiCalendarDate } from "react-icons/ci";
+// import { AiOutlineEnter } from "react-icons/ai";
+// import { CiCalendarDate } from "react-icons/ci";
 import { FaCircleCheck } from "react-icons/fa6";
 import {
   setSortDirection,
   sortTasks,
   addTask,
   updateTaskStatus,
-} from "../../redux/features/taskSlice";
-import { Task } from "../../api/types";
-import { RootState } from "../../redux/store";
-import { CustomSelect, CalendarPopup, formatDisplayDate } from "../";
-import "./styles.css";
+} from "../redux/features/taskSlice";
+import { Task } from "../api/types";
+import { RootState } from "../redux/store";
+import { CustomSelect, formatDisplayDate } from ".";
+import "./TaskList.css";
+import { TableCell, TableRow, TaskInputRow, Table } from "./common/Table";
 
 interface TaskListProps {
   categories: string[];
-  dueDates: string[];
-  tags: string[];
   statuses: string[];
 }
 
@@ -57,6 +56,13 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   });
   const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
   const [taskInput, setTaskInput] = useState<Task>(INITIAL_TASK);
+  const [isTaskAddable, setIsTaskAddable] = useState<boolean>(false);
+  const [error, setError] = useState<{
+    title: string;
+    dueDate: string;
+    category: string;
+    status: string;
+  }>({ title: "", dueDate: "", category: "", status: "" });
 
   const { filteredTasks, sortDirection } = useSelector(
     (state: RootState) => state.tasks
@@ -86,9 +92,39 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   }, [dispatch, sortDirection]);
 
   const addTaskHandler = useCallback(() => {
-    dispatch(addTask(taskInput));
-    setIsAddingTask(false);
-    setTaskInput(INITIAL_TASK);
+    if (
+      taskInput.title &&
+      taskInput.dueDate &&
+      taskInput.status &&
+      taskInput.category
+    ) {
+      setError({ title: "", dueDate: "", category: "", status: "" });
+      setIsTaskAddable(true);
+    } else if (!taskInput.title) {
+      setError({
+        ...error,
+        title: "Task name is required.",
+      });
+    } else if (!taskInput.dueDate) {
+      setError({
+        ...error,
+        dueDate: "Due date is required.",
+      });
+    } else if (!taskInput.status) {
+      setError({
+        ...error,
+        status: "Status is required.",
+      });
+    } else if (!taskInput.category) {
+      setError({
+        ...error,
+        category: "Category is required.",
+      });
+    } else {
+      dispatch(addTask(taskInput));
+      setIsAddingTask(false);
+      setTaskInput(INITIAL_TASK);
+    }
   }, [dispatch, taskInput]);
 
   const cancelHandler = useCallback(() => {
@@ -123,23 +159,17 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
     []
   );
 
-  const getMarginBottom = (status: keyof typeof categorizedTasks) => {
-    return !categorizedTasks[status]?.length || !sectionVisibility[status]
-      ? "3rem"
-      : "";
-  };
+  const getMarginBottom = () =>
+    !categorizedTasks.todo.length || !sectionVisibility.todo ? "3rem" : "";
 
   return (
-    <div className="task-list">
+    <Table>
       <div className="table-header">
-        <div
-          className="table-cell py-2"
-          style={{ gridColumn: "span 3", paddingLeft: "1rem" }}
-        >
+        <TableCell className="py-2 pl-1" style={{ gridColumn: "span 3" }}>
           Task Name
-        </div>
-        <div
-          className="table-cell py-2"
+        </TableCell>
+        <TableCell
+          className="py-2"
           onClick={toggleSortDirection}
           style={{ cursor: "pointer", gridColumn: "span 2" }}
         >
@@ -151,20 +181,20 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
           ) : (
             <FaSort />
           )}
-        </div>
-        <div className="table-cell py-2" style={{ gridColumn: "span 2" }}>
+        </TableCell>
+        <TableCell className="py-2" style={{ gridColumn: "span 2" }}>
           Status
-        </div>
-        <div className="table-cell py-2" style={{ gridColumn: "span 2" }}>
+        </TableCell>
+        <TableCell className="py-2" style={{ gridColumn: "span 2" }}>
           Category
-        </div>
-        <div className="table-cell py-2"></div>
+        </TableCell>
+        <TableCell className="py-2"></TableCell>
       </div>
       <div className="table-body">
         {Object.entries(categorizedTasks).map(([status, tasks]) => (
           <React.Fragment key={status}>
-            <div className="table-row">
-              <div
+            <TableRow>
+              <TableCell
                 className="table-cell"
                 style={{
                   backgroundColor:
@@ -204,8 +234,8 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                     <FaChevronDown />
                   )}
                 </h4>
-              </div>
-            </div>
+              </TableCell>
+            </TableRow>
             {status === "todo" && (
               <>
                 <div className="table-row">
@@ -213,7 +243,12 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                     className="table-cell"
                     style={{
                       gridColumn: "span 10",
-                      marginBottom: getMarginBottom("todo"),
+                      marginBottom:
+                        !isAddingTask &&
+                        (!categorizedTasks.todo.length ||
+                          !sectionVisibility.todo)
+                          ? "3rem"
+                          : "",
                     }}
                   >
                     <button
@@ -232,130 +267,47 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                   </div>
                 </div>
                 {isAddingTask && (
-                  <div className="table-row">
-                    <div
-                      className="table-cell"
-                      style={{
-                        gridColumn: "span 3",
-                        marginBottom: getMarginBottom("todo"),
-                      }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="Task Title"
-                        value={taskInput.title}
-                        onChange={(e) =>
-                          setTaskInput({
-                            ...taskInput,
-                            title: e.target.value,
-                          })
-                        }
-                        style={{ marginLeft: "5rem" }}
-                        className="add-task-input"
-                      />
-                      <div
-                        className="add-task-button-container flex-row align-center"
-                        style={{ marginLeft: "5rem" }}
-                      >
-                        <button
-                          className="add-button text-uppercase flex-row align-center justify-center"
-                          onClick={addTaskHandler}
-                        >
-                          <span>
-                            {taskInput.status === "EDITING" ? "Save" : "Add"}
-                          </span>
-                          <AiOutlineEnter
-                            style={{ width: "16px", height: "16px" }}
-                          />
-                        </button>
-                        <button
-                          className="cancel-button text-uppercase"
-                          onClick={cancelHandler}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                    <div
-                      className="table-cell"
-                      style={{
-                        gridColumn: "span 2",
-                        marginBottom: getMarginBottom("todo"),
-                      }}
-                    >
-                      <CalendarPopup
-                        selectedDate={
-                          taskInput.dueDate ? new Date(taskInput.dueDate) : null
-                        }
-                        onSelect={(date: Date) =>
-                          setTaskInput({
-                            ...taskInput,
-                            dueDate: date.toISOString(),
-                          })
-                        }
-                        className="add-date-button flex-row align-center justify-center"
-                      >
-                        <CiCalendarDate className="calendar-icon" />
-                        <span>Add Date</span>
-                      </CalendarPopup>
-                    </div>
-                    <div
-                      className="table-cell"
-                      style={{
-                        gridColumn: "span 2",
-                        marginBottom: getMarginBottom("todo"),
-                      }}
-                    >
-                      <CustomSelect
-                        options={statuses}
-                        selected={taskInput.status}
-                        onSelect={(value) =>
-                          setTaskInput({ ...taskInput, status: value })
-                        }
-                        className="flex-row align-center justify-center fa-plus-container"
-                      >
-                        <FaPlus style={{ width: "16px", height: "16px" }} />
-                      </CustomSelect>
-                    </div>
-                    <div
-                      className="table-cell"
-                      style={{
-                        gridColumn: "span 2",
-                        marginBottom: getMarginBottom("todo"),
-                      }}
-                    >
-                      <CustomSelect
-                        options={categories}
-                        selected={taskInput.category}
-                        onSelect={(value) =>
-                          setTaskInput({ ...taskInput, category: value })
-                        }
-                        className="flex-row align-center justify-center fa-plus-container"
-                      >
-                        <FaPlus style={{ width: "16px", height: "16px" }} />
-                      </CustomSelect>
-                    </div>
-                    <div
-                      className="table-cell"
-                      style={{ marginBottom: getMarginBottom("todo") }}
-                    />
-                  </div>
+                  <TaskInputRow
+                    taskInput={taskInput}
+                    statuses={statuses}
+                    categories={categories}
+                    onTitleChange={(title: string) => {
+                      setError({ ...error, title: "" });
+                      setTaskInput({ ...taskInput, title });
+                    }}
+                    onDueDateSelect={(date) =>
+                      setTaskInput({
+                        ...taskInput,
+                        dueDate: date.toISOString(),
+                      })
+                    }
+                    onStatusSelect={(value) =>
+                      setTaskInput({ ...taskInput, status: value })
+                    }
+                    onCategorySelect={(value) =>
+                      setTaskInput({ ...taskInput, category: value })
+                    }
+                    onAddTask={addTaskHandler}
+                    onCancel={cancelHandler}
+                    getMarginBottom={getMarginBottom}
+                    error={error}
+                  />
                 )}
               </>
             )}
             {sectionVisibility[status as "todo" | "inProgress" | "completed"] &&
               tasks.map((task, index) => (
-                <div
+                <TableRow
                   key={task.id}
-                  className={`table-row ${
+                  className={
                     index === tasks.length - 1 &&
                     (status !== "todo" || tasks.length)
                       ? "last-task"
                       : ""
-                  }`}
+                  }
                 >
-                  <div
-                    className="table-cell flex-row align-center"
+                  <TableCell
+                    className="flex-row align-center"
                     style={{ gridColumn: "span 3" }}
                   >
                     <input type="checkbox" className="checkbox" />
@@ -365,13 +317,15 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                       color={status === "completed" ? "#1B8D17" : ""}
                     />
                     <p className="task-title">{task.title}</p>
-                  </div>
-                  <div className="table-cell" style={{ gridColumn: "span 2" }}>
+                  </TableCell>
+
+                  <TableCell style={{ gridColumn: "span 2" }}>
                     <p className="task-due-date">
                       {formatDisplayDate(new Date(task.dueDate))}
                     </p>
-                  </div>
-                  <div className="table-cell" style={{ gridColumn: "span 2" }}>
+                  </TableCell>
+
+                  <TableCell style={{ gridColumn: "span 2" }}>
                     <CustomSelect
                       options={statuses}
                       selected={task.status}
@@ -385,11 +339,11 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                     >
                       {task.status}
                     </CustomSelect>
-                  </div>
-                  <div className="table-cell" style={{ gridColumn: "span 2" }}>
-                    {task.category}
-                  </div>
-                  <div className="table-cell">
+                  </TableCell>
+                  <TableCell style={{ gridColumn: "span 2" }}>
+                    <p>{task.category}</p>
+                  </TableCell>
+                  <TableCell>
                     <CustomSelect
                       options={["Edit", "Delete"]}
                       selected=""
@@ -399,12 +353,12 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                     >
                       <BsThreeDots style={{ cursor: "pointer" }} />
                     </CustomSelect>
-                  </div>
-                </div>
+                  </TableCell>
+                </TableRow>
               ))}
           </React.Fragment>
         ))}
       </div>
-    </div>
+    </Table>
   );
 };

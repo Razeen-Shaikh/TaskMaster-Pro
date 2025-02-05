@@ -35,7 +35,8 @@ const taskSlice = createSlice({
   initialState,
   reducers: {
     addTask: (state, action) => {
-      state.tasks.push(action.payload);
+      console.log({ action });
+      state.filteredTasks.push(action.payload);
     },
     editTask: (state, action) => {
       const index = state.tasks.findIndex(

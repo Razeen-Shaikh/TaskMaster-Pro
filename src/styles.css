@@ -1,328 +1,490 @@
-/* General */
-.row {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
+/* ========== General ========== */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
 
-.column {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .justify-start {
-    justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .justify-center {
-    justify-content: center;
+  justify-content: center;
 }
 
 .justify-end {
-    justify-content: flex-end;
+  justify-content: flex-end;
 }
 
 .justify-between {
-    justify-content: space-between;
+  justify-content: space-between;
 }
 
 .align-start {
-    align-items: flex-start;
+  align-items: flex-start;
 }
 
 .align-center {
-    align-items: center;
+  align-items: center;
 }
 
 .align-end {
-    align-items: flex-end;
+  align-items: flex-end;
+}
+
+.vertical-middle {
+  vertical-align: middle;
 }
 
 table {
-    border-spacing: 0 10px;
+  border-spacing: 0 10px;
 }
 
-/* Home */
-.home-title {
-    display: flex;
+/* ========== Padding utilities ========== */
+.p-0 {
+  padding: 0;
 }
 
+.p-1 {
+  padding: 0.25rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.p-5 {
+  padding: 1.25rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.p-7 {
+  padding: 1.75rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+/* Padding for specific sides */
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
+.pr-4 {
+  padding-right: 1rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pb-3 {
+  padding-bottom: 0.75rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+/* Padding for x and y axis */
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+* Text utilities */ .text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-normal {
+  font-weight: normal;
+}
+
+.text-light {
+  font-weight: lighter;
+}
+
+.text-small {
+  font-size: 0.75rem;
+}
+
+.text-medium {
+  font-size: 1rem;
+}
+
+.text-large {
+  font-size: 1.25rem;
+}
+
+/* Text transformation utilities */
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+/* ========== Home ========== */
 .home-container {
-    height: 100vh;
-    background-color: #FFF9F9;
+  height: 100vh;
+  background-color: #fff9f9;
 }
 
-.home-content {
-    width: 50%;
-}
-
-.home-card {
-    max-width: 366px;
-}
-
-.home-card p {
-    font-size: 11.64px;
-    font-weight: 500;
-    text-align: start;
-}
-
-
-
-.home-image {
-    width: 50%;
-    overflow: hidden;
-    align-self: flex-end;
-}
-
-.home-image img {
-    height: 662px;
-    border-radius: 20px;
-    opacity: 0px;
-}
-
-/* GoogleLogin */
-.google-login {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-radius: 20px;
-    margin-top: 30px;
-    text-align: "center";
-    background-color: #292929;
-    padding: 15px 0;
-    cursor: pointer;
-}
-
-.google-login button {
-    background-color: transparent;
-    color: #FFFFFF;
-    border: none;
-}
-
-.google-icon {
-    margin: auto 0;
-    margin-inline-end: 10px;
-}
-
-/* TaskBuddy */
 .home-title {
-    color: #7B1984;
-    margin-bottom: 10px;
+  display: flex;
+  color: #7b1984;
+  margin-bottom: 10px;
 }
 
 .home-title h1 {
-    text-align: start;
-    font-weight: 700;
-    font-size: 26.19px;
-    margin-left: 10px;
+  font-weight: 700;
+  font-size: 26.19px;
+  margin-left: 10px;
+  text-align: start;
 }
 
+.home-content {
+  width: 50%;
+}
+
+.home-card {
+  max-width: 366px;
+}
+
+.home-card p {
+  font-size: 11.64px;
+  font-weight: 500;
+  text-align: start;
+}
+
+.home-image {
+  width: 50%;
+  overflow: hidden;
+  align-self: flex-end;
+}
+
+.home-image img {
+  height: 662px;
+  border-radius: 20px;
+}
+
+/* ========== Google Login ========== */
+.google-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 20px;
+  margin-top: 30px;
+  background-color: #292929;
+  padding: 15px 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+.google-login button {
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+}
+
+.google-icon {
+  margin-inline-end: 10px;
+}
+
+/* ========== TaskBuddy ========== */
 .task-buddy {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .task-buddy h1 {
-    font-family: Mulish;
-    font-size: 24px;
-    font-weight: 600;
-    text-align: start;
-    margin-left: 8px;
+  font-family: Mulish;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: start;
+  margin-left: 8px;
 }
 
-/* Tasks */
-
-
+/* ========== Tasks ========== */
 .tasks-container {
-    display: flex;
-    flex-direction: column;
-    padding: 40px 30px;
-    font-family: Mulish !important;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 50px;
+  font-family: Mulish !important;
 }
 
 .tasks-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .profile-icon {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
 }
 
 .profile-icon img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    margin-right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .profile-icon p {
-    font-family: Mulish;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: start;
-    color: #00000099;
+  font-family: Mulish;
+  font-size: 16px;
+  font-weight: 700;
+  color: #00000099;
+  text-align: start;
 }
 
+/* ========== Task Board Navigation ========== */
 .task-board-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 .task-board-nav ul {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .list-style,
 .board-style {
-    font-family: Mulish;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    margin-right: 20px;
-    color: #231F20D1;
-    opacity: 0.8;
-    cursor: pointer;
+  font-family: Mulish;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  color: #231f20d1;
+  opacity: 0.8;
+  cursor: pointer;
 }
 
 .list-style p,
 .board-style p {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: start;
-    margin-left: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: start;
+  margin-left: 5px;
 }
 
 .active {
-    color: #000000;
-    border-bottom: 2px solid #000;
-    border-radius: 2px;
+  color: #000000;
+  border-bottom: 2px solid #000;
+  border-radius: 2px;
 }
 
+/* ========== Logout Button ========== */
 .logout {
-    font-family: Mulish;
-    background-color: #FFF9F9;
-    border: 1px solid #7B198426;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
+  font-family: Mulish;
+  background-color: #fff9f9;
+  border: 1px solid #7b198426;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
 }
 
 .logout span {
-    font-size: 12px;
-    font-weight: 600;
-    text-align: start;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: start;
 }
 
 .logout .icon {
-    width: 15px;
-    height: 15px;
-    margin-right: 10px;
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
 }
 
+/* ========== Tasks Filters ========== */
 .tasks-filters {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 30px;
 }
 
 .filters {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .filters p {
-    font-family: Mulish;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: start;
-    color: #00000099;
-    margin-right: 10px;
+  font-family: Mulish;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00000099;
+  margin-right: 10px;
 }
 
 .filters select {
-    border: 1px solid #00000033;
-    border-radius: 60px;
-    padding: 5px 8px 5px 8px;
-    opacity: 0px;
-    font-family: Mulish;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: start;
-    color: #00000099;
-    margin-right: 10px;
+  border: 1px solid #00000033;
+  border-radius: 60px;
+  padding: 5px 8px;
+  font-family: Mulish;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00000099;
+  margin-right: 10px;
 }
 
+/* ========== Search Bar ========== */
 .search {
-    display: flex;
-    align-items: center;
-}
-
-.search-bar input {
-    font-family: Mulish;
-    padding-left: 10px;
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-    border: none;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: start;
+  display: flex;
+  align-items: center;
 }
 
 .search-bar {
-    display: flex;
-    align-items: center;
-    padding: 6px 7px 6px 7px;
-    border-radius: 60px;
-    border: 1px solid #0000006B;
-    opacity: 0px;
-    margin-right: 10px;
+  display: flex;
+  align-items: center;
+  padding: 6px 7px;
+  border-radius: 60px;
+  border: 1px solid #0000006b;
+  margin-right: 10px;
 }
 
-
+.search-bar input {
+  font-family: Mulish;
+  padding-left: 10px;
+  width: 100%;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+}
 
 .search button {
-    padding: 14px 40px 14px 40px;
-    border-radius: 41px;
-    opacity: 0px;
-    background-color: #7B1984;
-    border: none;
-    font-family: Mulish;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
-    color: #fff;
-    box-shadow: none;
+  padding: 14px 40px;
+  border-radius: 41px;
+  background-color: #7b1984;
+  border: none;
+  font-family: Mulish;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  box-shadow: none;
 }
 
-/* TaskList */
-.task-list {
-    border-block-start: 1px solid #0000001A;
-}
-
-.task-list thead tr th {
-    text-align: start;
-    font-family: Mulish;
-    font-size: 14px;
-    font-weight: 700;
-    color: #00000099;
-}
-
-.task-list th:nth-child(2) {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}

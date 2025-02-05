@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./styles.css";
+import "./CustomSelect.css";
 
 interface CustomSelectProps {
   options: string[];

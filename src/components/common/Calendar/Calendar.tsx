@@ -7,9 +7,10 @@ import {
   startOfWeek,
   getYear,
   getMonth,
+  isBefore,
 } from "date-fns";
 import { isToday, addDays, isSameDay } from "date-fns";
-import "./styles.css";
+import "./Calendar.css";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const YEARS = Array.from({ length: 10 }, (_, i) => getYear(new Date()) - 5 + i);
@@ -71,7 +72,7 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
         <button className={className} onClick={togglePopup}>
           {children}
         </button>
-        <p>{selectedDate && formatDisplayDate(selectedDate)}</p>
+        <p>{selectedDate && formatDisplayDate(new Date(selectedDate))}</p>
       </div>
 
       {isOpen && (
@@ -159,6 +160,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 : ""
             }`}
             onClick={() => onSelect(day)}
+            disabled={isBefore(day, addDays(new Date(), -1))}
           >
             {format(day, "d")}
           </button>
