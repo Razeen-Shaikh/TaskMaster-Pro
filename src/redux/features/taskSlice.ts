@@ -1,71 +1,52 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import dummyTasks from "../../api/task";
-import { Task } from "../../api/types/task.interface";
+import { Task } from "../../api/tasks.data";
 
 interface TaskState {
   tasks: Task[];
   filteredTasks: Task[];
-  sortedTasks: Task[];
   filter: {
-    category: string;
-    dueDate: string;
-    tag: string;
+    category?: string;
+    dueDate?: string;
+    tag?: string;
+    searchQuery?: string;
   };
-  isLoading: boolean;
-  error: string | null;
   sortDirection: "asc" | "desc" | "";
 }
 
 const initialState: TaskState = {
-  tasks: dummyTasks,
-  filteredTasks: dummyTasks,
-  sortedTasks: dummyTasks,
-  filter: {
-    category: "",
-    dueDate: "",
-    tag: "",
-  },
-  isLoading: false,
-  error: "",
+  tasks: [],
+  filteredTasks: [],
+  filter: {},
   sortDirection: "",
+};
+
+const applyFilters = (tasks: Task[], filter: TaskState["filter"]) => {
+  return tasks.filter((task) => {
+    return (
+      (filter.category ? task.category === filter.category : true) &&
+      (filter.dueDate ? task.dueDate === filter.dueDate : true) &&
+      (filter.tag ? task.tags.includes(filter.tag) : true) &&
+      (filter.searchQuery
+        ? task.title.toLowerCase().includes(filter.searchQuery.toLowerCase())
+        : true)
+    );
+  });
 };
 
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    addTask: (state, action) => {
-      console.log({ action });
-      state.filteredTasks.push(action.payload);
-    },
-    editTask: (state, action) => {
-      const index = state.tasks.findIndex(
-        (task) => task.id === action.payload.id
-      );
-      if (index !== -1) state.tasks[index] = action.payload;
-    },
-    deleteTask: (state, action) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-    },
-    setTasks: (state, action) => {
+    setTasks: (state, action: PayloadAction<Task[]>) => {
+      state.tasks = action.payload;
       state.filteredTasks = action.payload;
     },
     setFilter: (state, action: PayloadAction<Partial<TaskState["filter"]>>) => {
       state.filter = { ...state.filter, ...action.payload };
-      state.filteredTasks = state.tasks.filter((task) => {
-        return (
-          (state.filter.category
-            ? task.category === state.filter.category
-            : true) &&
-          (state.filter.dueDate
-            ? task.dueDate === state.filter.dueDate
-            : true) &&
-          (state.filter.tag ? task.tags.includes(state.filter.tag) : true)
-        );
-      });
+      state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
     sortTasks: (state) => {
-      const sorted = [...state.sortedTasks];
+      const sorted = [...state.filteredTasks];
       if (state.sortDirection === "asc") {
         sorted.sort(
           (a, b) =>
@@ -77,30 +58,57 @@ const taskSlice = createSlice({
             new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
         );
       }
-      state.sortedTasks = sorted;
+      state.filteredTasks = sorted;
     },
     setSortDirection: (state, action: PayloadAction<"" | "asc" | "desc">) => {
       state.sortDirection = action.payload;
+    },
+    addTask: (state, action: PayloadAction<Task>) => {
+      state.tasks.push(action.payload);
+      state.filteredTasks = applyFilters(state.tasks, state.filter);
+    },
+    updateTask: (state, action: PayloadAction<Task>) => {
+      const index = state.tasks.findIndex(
+        (task) => task.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.tasks[index] = action.payload;
+        state.filteredTasks = applyFilters(state.tasks, state.filter);
+      }
     },
     updateTaskStatus: (
       state,
       action: PayloadAction<{ id: string; status: string }>
     ) => {
       const { id, status } = action.payload;
-      const index = state.filteredTasks.findIndex((task) => task.id === id);
-      if (index !== -1) state.filteredTasks[index].status = status;
+      const index = state.tasks.findIndex((task) => task.id === id);
+      if (index !== -1) {
+        state.tasks[index].updatedDate = new Date().toISOString();
+        state.tasks[index].history.push({
+          date: new Date().toISOString(),
+          action: "UPDATED",
+          details: `You changed status from ${state.tasks[index].status} to ${status}`,
+        });
+        state.tasks[index].status = status;
+
+        state.filteredTasks = applyFilters(state.tasks, state.filter);
+      }
+    },
+    deleteTask: (state, action: PayloadAction<string>) => {
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
   },
 });
 
 export const {
-  addTask,
-  editTask,
-  deleteTask,
   setTasks,
   setFilter,
   sortTasks,
   setSortDirection,
+  addTask,
+  updateTask,
   updateTaskStatus,
+  deleteTask,
 } = taskSlice.actions;
 export default taskSlice.reducer;

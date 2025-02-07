@@ -14,10 +14,12 @@
 
 .dropdown-content {
   position: absolute;
-  background-color: #f9f9f9;
+  right: 15%;
+  background-color: #fef9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  border: 1px solid #7b198426;
+  box-shadow: 0px 4px 4px 0px #7b19841f;
+  z-index: 9999;
   border-radius: 12px;
 }
 

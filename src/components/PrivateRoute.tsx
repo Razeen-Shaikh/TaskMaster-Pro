@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { checkAuthState } from "../firebase";
 import { User } from "firebase/auth";
+import { checkAuthState } from "../firebase";
 
 const PrivateRoute = () => {
   const [user, setUser] = useState<User | null>(null);

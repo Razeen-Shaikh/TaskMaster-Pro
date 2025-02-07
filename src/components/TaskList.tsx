@@ -10,20 +10,23 @@ import {
   FaSortUp,
 } from "react-icons/fa";
 import { RxDragHandleDots2 } from "react-icons/rx";
-// import { AiOutlineEnter } from "react-icons/ai";
-// import { CiCalendarDate } from "react-icons/ci";
 import { FaCircleCheck } from "react-icons/fa6";
+import dummyTasks, { Task } from "../api/tasks.data";
 import {
   setSortDirection,
   sortTasks,
   addTask,
   updateTaskStatus,
+  deleteTask,
+  setTasks,
 } from "../redux/features/taskSlice";
-import { Task } from "../api/types";
 import { RootState } from "../redux/store";
-import { CustomSelect, formatDisplayDate } from ".";
-import "./TaskList.css";
-import { TableCell, TableRow, TaskInputRow, Table } from "./common/Table";
+import { formatDisplayDate } from "../utils/helper";
+import { CustomSelect } from "./CustomSelect";
+import { Table, TableCell, TableRow } from "./Table";
+import TaskInputRow from "./Table/TaskInputRow";
+import { ViewOrEdit } from "./ViewOrEdit";
+import "../assets/styles/TaskList.css";
 
 interface TaskListProps {
   categories: string[];
@@ -40,10 +43,14 @@ const INITIAL_TASK: Task = {
   priority: "",
   tags: [],
   attachments: [],
+  createdDate: "",
+  updatedDate: "",
+  history: [],
 };
 
 export const TaskList = ({ categories, statuses }: TaskListProps) => {
   const dispatch = useDispatch();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const [sectionVisibility, setSectionVisibility] = useState<{
     todo: boolean;
@@ -56,13 +63,6 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   });
   const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
   const [taskInput, setTaskInput] = useState<Task>(INITIAL_TASK);
-  const [isTaskAddable, setIsTaskAddable] = useState<boolean>(false);
-  const [error, setError] = useState<{
-    title: string;
-    dueDate: string;
-    category: string;
-    status: string;
-  }>({ title: "", dueDate: "", category: "", status: "" });
 
   const { filteredTasks, sortDirection } = useSelector(
     (state: RootState) => state.tasks
@@ -74,7 +74,7 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
     completed: Task[];
   } = useMemo(() => {
     return {
-      todo: filteredTasks.filter((task: Task) => task.status === "PENDING"),
+      todo: filteredTasks.filter((task: Task) => task.status === "TO-DO"),
       inProgress: filteredTasks.filter(
         (task: Task) => task.status === "IN-PROGRESS"
       ),
@@ -98,29 +98,18 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
       taskInput.status &&
       taskInput.category
     ) {
-      setError({ title: "", dueDate: "", category: "", status: "" });
-      setIsTaskAddable(true);
-    } else if (!taskInput.title) {
-      setError({
-        ...error,
-        title: "Task name is required.",
+      setTaskInput({
+        ...taskInput,
+        createdDate: new Date().toISOString(),
+        updatedDate: new Date().toISOString(),
+        history: [
+          {
+            date: new Date().toISOString(),
+            action: "CREATED",
+            details: "You created this task",
+          },
+        ],
       });
-    } else if (!taskInput.dueDate) {
-      setError({
-        ...error,
-        dueDate: "Due date is required.",
-      });
-    } else if (!taskInput.status) {
-      setError({
-        ...error,
-        status: "Status is required.",
-      });
-    } else if (!taskInput.category) {
-      setError({
-        ...error,
-        category: "Category is required.",
-      });
-    } else {
       dispatch(addTask(taskInput));
       setIsAddingTask(false);
       setTaskInput(INITIAL_TASK);
@@ -137,13 +126,13 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
     (action: string, task: Task) => {
       if (action.toLowerCase() === "edit") {
         setTaskInput({ ...task });
+        setSelectedTask({ ...task });
         setIsAddingTask(true);
-        dispatch(updateTaskStatus({ id: task.id, status: "EDITING" }));
       } else if (
         action.toLowerCase() === "delete" &&
         window.confirm("Are you sure you want to delete this task?")
       ) {
-        dispatch(updateTaskStatus({ id: task.id, status: "DELETED" }));
+        dispatch(deleteTask(task.id));
       }
     },
     [dispatch]
@@ -162,203 +151,255 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   const getMarginBottom = () =>
     !categorizedTasks.todo.length || !sectionVisibility.todo ? "3rem" : "";
 
+  useEffect(() => {
+    dispatch(setTasks(dummyTasks));
+  }, [dispatch]);
+
   return (
-    <Table>
-      <div className="table-header">
-        <TableCell className="py-2 pl-1" style={{ gridColumn: "span 3" }}>
-          Task Name
-        </TableCell>
-        <TableCell
-          className="py-2"
-          onClick={toggleSortDirection}
-          style={{ cursor: "pointer", gridColumn: "span 2" }}
-        >
-          <span>Due Date</span>&nbsp;
-          {sortDirection === "asc" ? (
-            <FaSortUp />
-          ) : sortDirection === "desc" ? (
-            <FaSortDown />
-          ) : (
-            <FaSort />
-          )}
-        </TableCell>
-        <TableCell className="py-2" style={{ gridColumn: "span 2" }}>
-          Status
-        </TableCell>
-        <TableCell className="py-2" style={{ gridColumn: "span 2" }}>
-          Category
-        </TableCell>
-        <TableCell className="py-2"></TableCell>
-      </div>
-      <div className="table-body">
-        {Object.entries(categorizedTasks).map(([status, tasks]) => (
-          <React.Fragment key={status}>
-            <TableRow>
-              <TableCell
-                className="table-cell"
-                style={{
-                  backgroundColor:
-                    status === "todo"
-                      ? "#FAC3FF"
-                      : status === "inProgress"
-                      ? "#85D9F1"
-                      : "#CEFFCC",
-                  borderTopLeftRadius: "12px",
-                  borderTopRightRadius: "12px",
-                  borderTop: "1px solid #0000001a",
-                  padding: "0.5rem",
-                  marginBottom:
-                    status !== "todo" &&
-                    !sectionVisibility[status as keyof typeof sectionVisibility]
-                      ? "3rem"
-                      : "0",
-                }}
-              >
-                <h4
-                  onClick={() =>
-                    toggleSectionVisibility(
-                      status as "todo" | "inProgress" | "completed"
-                    )
-                  }
-                  className="flex-row align-center justify-between px-2 py-2 text-capitalize task-status-header"
+    <>
+      <Table>
+        <div className="table-header d-none">
+          <TableCell className="py-2 pl-1 span-3">Task Name</TableCell>
+          <TableCell
+            className="flex-row align-center py-2 span-2 cursor-pointer"
+            onClick={toggleSortDirection}
+          >
+            <p>Due Date</p>
+            {sortDirection === "asc" ? (
+              <FaSortUp />
+            ) : sortDirection === "desc" ? (
+              <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </TableCell>
+          <TableCell className="py-2 span-2">Status</TableCell>
+          <TableCell className="py-2 span-2">Category</TableCell>
+          <TableCell className="py-2"></TableCell>
+        </div>
+        <div className="table-body">
+          {Object.entries(categorizedTasks).map(([status, tasks]) => (
+            <React.Fragment key={status}>
+              <TableRow>
+                <TableCell
+                  className="cursor-pointer p-2"
+                  style={{
+                    backgroundColor:
+                      status === "todo"
+                        ? "#FAC3FF"
+                        : status === "inProgress"
+                        ? "#85D9F1"
+                        : "#CEFFCC",
+                    borderTopLeftRadius: "12px",
+                    borderTopRightRadius: "12px",
+                    borderTop: "1px solid #0000001a",
+                    marginBottom:
+                      status !== "todo" &&
+                      status !== "completed" &&
+                      (!sectionVisibility[
+                        status as keyof typeof sectionVisibility
+                      ] ||
+                        !categorizedTasks[
+                          status as keyof typeof categorizedTasks
+                        ].length)
+                        ? "3rem"
+                        : "0",
+                  }}
                 >
-                  <p>
-                    <span>{status.replace(/([A-Z])/g, " $1").trim()}</span> (
-                    <span>{tasks.length}</span>)
-                  </p>
-                  {sectionVisibility[
-                    status as "todo" | "inProgress" | "completed"
-                  ] ? (
-                    <FaChevronUp />
-                  ) : (
-                    <FaChevronDown />
-                  )}
-                </h4>
-              </TableCell>
-            </TableRow>
-            {status === "todo" && (
-              <>
-                <div className="table-row">
-                  <div
-                    className="table-cell"
-                    style={{
-                      gridColumn: "span 10",
-                      marginBottom:
-                        !isAddingTask &&
-                        (!categorizedTasks.todo.length ||
-                          !sectionVisibility.todo)
-                          ? "3rem"
-                          : "",
-                    }}
+                  <h4
+                    onClick={() =>
+                      toggleSectionVisibility(
+                        status as "todo" | "inProgress" | "completed"
+                      )
+                    }
+                    className="flex-row align-center justify-between px-2 py-2 text-capitalize task-status-header"
                   >
-                    <button
-                      onClick={() => setIsAddingTask(true)}
-                      className="add-task-button flex-row align-center"
-                    >
-                      <FaPlus
+                    <p>
+                      <span>{status.replace(/([A-Z])/g, " $1").trim()}</span> (
+                      <span>{tasks.length}</span>)
+                    </p>
+                    {sectionVisibility[
+                      status as "todo" | "inProgress" | "completed"
+                    ] ? (
+                      <FaChevronUp
                         style={{
-                          color: "#7B1984",
-                          width: "18px",
-                          height: "18px",
+                          color:
+                            status === "todo"
+                              ? "#3E0344"
+                              : status === "inProgress"
+                              ? "#055167"
+                              : "#0D7A0A",
                         }}
                       />
-                      <p className="text-uppercase">Add Task</p>
-                    </button>
-                  </div>
-                </div>
-                {isAddingTask && (
-                  <TaskInputRow
-                    taskInput={taskInput}
-                    statuses={statuses}
-                    categories={categories}
-                    onTitleChange={(title: string) => {
-                      setError({ ...error, title: "" });
-                      setTaskInput({ ...taskInput, title });
-                    }}
-                    onDueDateSelect={(date) =>
-                      setTaskInput({
-                        ...taskInput,
-                        dueDate: date.toISOString(),
-                      })
-                    }
-                    onStatusSelect={(value) =>
-                      setTaskInput({ ...taskInput, status: value })
-                    }
-                    onCategorySelect={(value) =>
-                      setTaskInput({ ...taskInput, category: value })
-                    }
-                    onAddTask={addTaskHandler}
-                    onCancel={cancelHandler}
-                    getMarginBottom={getMarginBottom}
-                    error={error}
-                  />
-                )}
-              </>
-            )}
-            {sectionVisibility[status as "todo" | "inProgress" | "completed"] &&
-              tasks.map((task, index) => (
-                <TableRow
-                  key={task.id}
-                  className={
-                    index === tasks.length - 1 &&
-                    (status !== "todo" || tasks.length)
-                      ? "last-task"
-                      : ""
-                  }
-                >
-                  <TableCell
-                    className="flex-row align-center"
-                    style={{ gridColumn: "span 3" }}
-                  >
-                    <input type="checkbox" className="checkbox" />
-                    <RxDragHandleDots2 className="drag-icon" />
-                    <FaCircleCheck
-                      className="check-icon"
-                      color={status === "completed" ? "#1B8D17" : ""}
+                    ) : (
+                      <FaChevronDown
+                        style={{
+                          color:
+                            status === "todo"
+                              ? "#3E0344"
+                              : status === "inProgress"
+                              ? "#055167"
+                              : "#0D7A0A",
+                        }}
+                      />
+                    )}
+                  </h4>
+                </TableCell>
+              </TableRow>
+              {status === "todo" && (
+                <>
+                  <TableRow className="d-none">
+                    <TableCell
+                      className="span-10"
+                      style={{
+                        marginBottom:
+                          !isAddingTask &&
+                          (!categorizedTasks.todo.length ||
+                            !sectionVisibility.todo)
+                            ? "3rem"
+                            : "",
+                      }}
+                    >
+                      <button
+                        onClick={() => setIsAddingTask(true)}
+                        className="add-task-button flex-row align-center"
+                      >
+                        <FaPlus
+                          style={{
+                            color: "#7B1984",
+                            width: "18px",
+                            height: "18px",
+                          }}
+                        />
+                        <p className="text-uppercase">Add Task</p>
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                  {isAddingTask && (
+                    <TaskInputRow
+                      taskInput={taskInput}
+                      statuses={statuses}
+                      categories={categories}
+                      onAddTask={addTaskHandler}
+                      onCancel={cancelHandler}
+                      getMarginBottom={getMarginBottom}
+                      setTaskInput={setTaskInput}
                     />
-                    <p className="task-title">{task.title}</p>
-                  </TableCell>
-
-                  <TableCell style={{ gridColumn: "span 2" }}>
-                    <p className="task-due-date">
-                      {formatDisplayDate(new Date(task.dueDate))}
-                    </p>
-                  </TableCell>
-
-                  <TableCell style={{ gridColumn: "span 2" }}>
-                    <CustomSelect
-                      options={statuses}
-                      selected={task.status}
-                      onSelect={(value) =>
-                        dispatch(
-                          updateTaskStatus({ id: task.id, status: value })
-                        )
-                      }
-                      hideText={true}
-                      className="task-status"
+                  )}
+                </>
+              )}
+              {sectionVisibility[
+                status as "todo" | "inProgress" | "completed"
+              ] &&
+                tasks.map((task, index) => (
+                  <TableRow key={task.id}>
+                    <TableCell
+                      className="flex-row align-center span-3"
+                      style={{
+                        marginBottom:
+                          index === tasks.length - 1 && status !== "completed"
+                            ? "3rem"
+                            : "",
+                        borderBottomLeftRadius:
+                          index === tasks.length - 1 ? "12px" : "",
+                      }}
                     >
-                      {task.status}
-                    </CustomSelect>
-                  </TableCell>
-                  <TableCell style={{ gridColumn: "span 2" }}>
-                    <p>{task.category}</p>
-                  </TableCell>
-                  <TableCell>
-                    <CustomSelect
-                      options={["Edit", "Delete"]}
-                      selected=""
-                      onSelect={(value: string) => editOrDelete(value, task)}
-                      className="bs-dots-container"
-                      hideText={true}
+                      <input type="checkbox" className="checkbox" />
+                      <RxDragHandleDots2 className="drag-icon" />
+                      <FaCircleCheck
+                        className="check-icon"
+                        color={status === "completed" ? "#1B8D17" : ""}
+                      />
+                      <p
+                        className="task-title"
+                        style={{
+                          textDecoration:
+                            status === "completed" ? "line-through" : "",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {task.title}
+                      </p>
+                    </TableCell>
+                    <TableCell
+                      className="span-2 d-none"
+                      style={{
+                        marginBottom:
+                          index === tasks.length - 1 && status !== "completed"
+                            ? "3rem"
+                            : "",
+                      }}
                     >
-                      <BsThreeDots style={{ cursor: "pointer" }} />
-                    </CustomSelect>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </React.Fragment>
-        ))}
-      </div>
-    </Table>
+                      <p className="task-due-date">
+                        {formatDisplayDate(new Date(task.dueDate))}
+                      </p>
+                    </TableCell>
+                    <TableCell
+                      className="span-2 d-none"
+                      style={{
+                        marginBottom:
+                          index === tasks.length - 1 && status !== "completed"
+                            ? "3rem"
+                            : "",
+                      }}
+                    >
+                      <CustomSelect
+                        options={statuses}
+                        selected={task.status}
+                        onSelect={(value) =>
+                          dispatch(
+                            updateTaskStatus({ id: task.id, status: value })
+                          )
+                        }
+                        hideText={true}
+                        className="task-status"
+                      >
+                        {task.status}
+                      </CustomSelect>
+                    </TableCell>
+                    <TableCell
+                      className="span-2 d-none"
+                      style={{
+                        marginBottom:
+                          index === tasks.length - 1 && status !== "completed"
+                            ? "3rem"
+                            : "",
+                      }}
+                    >
+                      <p>{task.category}</p>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        marginBottom:
+                          index === tasks.length - 1 && status !== "completed"
+                            ? "3rem"
+                            : "",
+                        borderBottomRightRadius:
+                          index === tasks.length - 1 ? "12px" : "",
+                        paddingRight: "1.5rem",
+                      }}
+                      className="d-none"
+                    >
+                      <CustomSelect
+                        options={["Edit", "Delete"]}
+                        selected=""
+                        onSelect={(value: string) => editOrDelete(value, task)}
+                        className="bs-dots-container"
+                        hideText={true}
+                        editOrDelete={true}
+                      >
+                        <BsThreeDots style={{ cursor: "pointer" }} />
+                      </CustomSelect>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </Table>
+      {selectedTask && (
+        <ViewOrEdit task={taskInput} onClose={() => setSelectedTask(null)} />
+      )}
+    </>
   );
 };

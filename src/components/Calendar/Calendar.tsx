@@ -9,8 +9,9 @@ import {
   getMonth,
   isBefore,
 } from "date-fns";
-import { isToday, addDays, isSameDay } from "date-fns";
+import { addDays } from "date-fns";
 import "./Calendar.css";
+import { formatDisplayDate } from "../../utils/helper";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const YEARS = Array.from({ length: 10 }, (_, i) => getYear(new Date()) - 5 + i);
@@ -23,16 +24,7 @@ interface CalendarPopupProps {
   onSelect: (date: Date) => void;
   children: React.ReactNode;
   className?: string;
-}
-
-export function formatDisplayDate(date: Date): string {
-  if (isToday(date)) {
-    return "Today";
-  }
-  if (isSameDay(date, addDays(new Date(), 1))) {
-    return "Tomorrow";
-  }
-  return format(date, "dd MMM, yyyy");
+  error?: string;
 }
 
 export const CalendarPopup: React.FC<CalendarPopupProps> = ({
@@ -47,6 +39,7 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
 
   const togglePopup = () => setIsOpen(!isOpen);
   const handleDateSelect = (date: Date) => {
+    setIsOpen(false);
     onSelect(date);
   };
 
@@ -72,6 +65,7 @@ export const CalendarPopup: React.FC<CalendarPopupProps> = ({
         <button className={className} onClick={togglePopup}>
           {children}
         </button>
+
         <p>{selectedDate && formatDisplayDate(new Date(selectedDate))}</p>
       </div>
 

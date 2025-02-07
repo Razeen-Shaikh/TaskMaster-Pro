@@ -9,13 +9,14 @@ import {
   sortTasks,
   addTask,
   updateTaskStatus,
-} from "../redux/features/taskSlice";
-import dummyTasks, { Task } from "../api/tasks.data";
-import { RootState } from "../redux/store";
-import { CustomSelect, ViewOrEdit } from ".";
-import TaskInputRow from "./Table/TaskInputRow"; // reuse input row component if it fits the design
-import { formatDisplayDate } from "../utils/helper";
-import "./TaskBoard.css"; // new CSS file for board styling
+} from "../../redux/features/taskSlice";
+import dummyTasks, { Task } from "../../api/tasks.data";
+import { RootState } from "../../redux/store";
+import { CustomSelect, ViewOrEdit } from "..";
+import TaskInputRow from "../Table/TaskInputRow";
+import { formatDisplayDate } from "../../utils/helper";
+import "./TaskBoard.css";
+import { FaCircleCheck } from "react-icons/fa6";
 
 interface TaskBoardProps {
   categories: string[];
@@ -47,7 +48,6 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
     (state: RootState) => state.tasks
   );
 
-  // Group tasks by status
   const categorizedTasks: {
     "TO-DO": Task[];
     "IN-PROGRESS": Task[];
@@ -119,44 +119,20 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
     [dispatch]
   );
 
-  // Automatically load tasks from dummy data when component mounts
   useEffect(() => {
     dispatch(setTasks(dummyTasks));
   }, [dispatch]);
 
   return (
     <div className="task-board">
-      {/* Column for TO-DO tasks */}
       <div className="board-column todo-column">
         <div className="column-header">
-          <h4>To-Do ({categorizedTasks["TO-DO"].length})</h4>
-          <button
-            className="add-task-btn"
-            onClick={() => setIsAddingTask(true)}
-          >
-            <FaPlus /> Add Task
-          </button>
+          <h4 className="column-title-todo">TO-DO</h4>
         </div>
         <div className="column-body">
-          {isAddingTask && taskInput.status === "TO-DO" && (
-            <TaskInputRow
-              taskInput={taskInput}
-              statuses={statuses}
-              categories={categories}
-              onAddTask={addTaskHandler}
-              onCancel={cancelHandler}
-              // Adjust margin if needed for board style
-              getMarginBottom={() => "1rem"}
-              setTaskInput={setTaskInput}
-            />
-          )}
           {categorizedTasks["TO-DO"].map((task) => (
             <div key={task.id} className="task-card">
               <div className="card-header">
-                <input type="checkbox" className="checkbox" />
-                <span className="drag-handle">
-                  <FaCircleCheck color="#1B8D17" />
-                </span>
                 <p
                   className="task-title"
                   onClick={() => setSelectedTask(task)}
@@ -168,25 +144,6 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
                 >
                   {task.title}
                 </p>
-              </div>
-              <div className="card-body">
-                <p className="due-date">
-                  Due: {formatDisplayDate(new Date(task.dueDate))}
-                </p>
-                <p className="category">Category: {task.category}</p>
-              </div>
-              <div className="card-footer">
-                <CustomSelect
-                  options={statuses}
-                  selected={task.status}
-                  onSelect={(value) =>
-                    dispatch(updateTaskStatus({ id: task.id, status: value }))
-                  }
-                  hideText={true}
-                  className="status-select"
-                >
-                  {task.status}
-                </CustomSelect>
                 <CustomSelect
                   options={["Edit", "Delete"]}
                   selected=""
@@ -197,31 +154,25 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
                   <BsThreeDots style={{ cursor: "pointer" }} />
                 </CustomSelect>
               </div>
+              <div className="card-body">
+                <p className="category">{task.category}</p>
+                <p className="due-date">
+                  {formatDisplayDate(new Date(task.dueDate))}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Column for IN-PROGRESS tasks */}
       <div className="board-column inprogress-column">
         <div className="column-header">
-          <h4>In-Progress ({categorizedTasks["IN-PROGRESS"].length})</h4>
-          <button onClick={toggleSortDirection} className="sort-btn">
-            {sortDirection === "asc"
-              ? "Sort ↑"
-              : sortDirection === "desc"
-              ? "Sort ↓"
-              : "Sort"}
-          </button>
+          <h4 className="column-title-inprogress">IN-PROGRESS</h4>
         </div>
         <div className="column-body">
           {categorizedTasks["IN-PROGRESS"].map((task) => (
             <div key={task.id} className="task-card">
               <div className="card-header">
-                <input type="checkbox" className="checkbox" />
-                <span className="drag-handle">
-                  <FaCircleCheck color="#1B8D17" />
-                </span>
                 <p
                   className="task-title"
                   onClick={() => setSelectedTask(task)}
@@ -233,25 +184,6 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
                 >
                   {task.title}
                 </p>
-              </div>
-              <div className="card-body">
-                <p className="due-date">
-                  Due: {formatDisplayDate(new Date(task.dueDate))}
-                </p>
-                <p className="category">Category: {task.category}</p>
-              </div>
-              <div className="card-footer">
-                <CustomSelect
-                  options={statuses}
-                  selected={task.status}
-                  onSelect={(value) =>
-                    dispatch(updateTaskStatus({ id: task.id, status: value }))
-                  }
-                  hideText={true}
-                  className="status-select"
-                >
-                  {task.status}
-                </CustomSelect>
                 <CustomSelect
                   options={["Edit", "Delete"]}
                   selected=""
@@ -261,66 +193,58 @@ export const TaskBoard = ({ categories, statuses }: TaskBoardProps) => {
                 >
                   <BsThreeDots style={{ cursor: "pointer" }} />
                 </CustomSelect>
+              </div>
+              <div className="card-body">
+                <p className="category"> {task.category}</p>
+                <p className="due-date">
+                  {formatDisplayDate(new Date(task.dueDate))}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Column for COMPLETED tasks */}
       <div className="board-column completed-column">
         <div className="column-header">
-          <h4>Completed ({categorizedTasks["COMPLETED"].length})</h4>
+          <h4 className="column-title-completed">COMPLETED</h4>
         </div>
         <div className="column-body">
-          {categorizedTasks["COMPLETED"].map((task) => (
-            <div key={task.id} className="task-card">
-              <div className="card-header">
-                <input type="checkbox" className="checkbox" checked readOnly />
-                <span className="drag-handle">
-                  <FaCircleCheck color="#1B8D17" />
-                </span>
-                <p
-                  className="task-title"
-                  onClick={() => setSelectedTask(task)}
-                  style={{
-                    textDecoration: "line-through",
-                    cursor: "pointer",
-                  }}
-                >
-                  {task.title}
-                </p>
+          {categorizedTasks["COMPLETED"].length ? (
+            categorizedTasks["COMPLETED"].map((task) => (
+              <div key={task.id} className="task-card">
+                <div className="card-header">
+                  <p
+                    className="task-title"
+                    onClick={() => setSelectedTask(task)}
+                    style={{
+                      textDecoration: "line-through",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {task.title}
+                  </p>
+                  <CustomSelect
+                    options={["Edit", "Delete"]}
+                    selected=""
+                    onSelect={(value: string) => editOrDelete(value, task)}
+                    className="options-select"
+                    hideText={true}
+                  >
+                    <BsThreeDots style={{ cursor: "pointer" }} />
+                  </CustomSelect>
+                </div>
+                <div className="card-body">
+                  <p className="category"> {task.category}</p>
+                  <p className="due-date">
+                    {formatDisplayDate(new Date(task.dueDate))}
+                  </p>
+                </div>
               </div>
-              <div className="card-body">
-                <p className="due-date">
-                  Due: {formatDisplayDate(new Date(task.dueDate))}
-                </p>
-                <p className="category">Category: {task.category}</p>
-              </div>
-              <div className="card-footer">
-                <CustomSelect
-                  options={statuses}
-                  selected={task.status}
-                  onSelect={(value) =>
-                    dispatch(updateTaskStatus({ id: task.id, status: value }))
-                  }
-                  hideText={true}
-                  className="status-select"
-                >
-                  {task.status}
-                </CustomSelect>
-                <CustomSelect
-                  options={["Edit", "Delete"]}
-                  selected=""
-                  onSelect={(value: string) => editOrDelete(value, task)}
-                  className="options-select"
-                  hideText={true}
-                >
-                  <BsThreeDots style={{ cursor: "pointer" }} />
-                </CustomSelect>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No Tasks in To-Do</p>
+          )}
         </div>
       </div>
 

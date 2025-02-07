@@ -27,11 +27,13 @@ const Home = () => {
     <div className="home-container flex-row justify-center align-center">
       <div className="home-content flex-row justify-center align-center">
         <div className="home-card">
-          <TaskBuddy className="home-title" />
-          <p>
-            Streamline your workflow and track progress effortlessly with our
-            all-in-one task management app.
-          </p>
+          <div className="home-header">
+            <TaskBuddy className="home-title" />
+            <p>
+              Streamline your workflow and track progress effortlessly with our
+              all-in-one task management app.
+            </p>
+          </div>
           <GoogleLogin handleGoogleLogin={handleGoogleLogin} />
         </div>
       </div>

@@ -10,7 +10,8 @@
 }
 
 body {
-  font-family: 'Urbanist', sans-serif;
+  font-family: "Urbanist", sans-serif;
   min-height: 100vh;
-  min-width: 100vw;
+  width: 100vw;
+  overflow-x: hidden;
 }

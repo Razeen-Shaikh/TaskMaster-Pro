@@ -5,14 +5,15 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./pages/Home";
-import PrivateRoute from "./components/PrivateRoute";
-import "./styles.css";
 import { Profile } from "./pages/Profile";
 import Tasks from "./pages/Tasks";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { monitorAuthState } from "./redux/actions/authActions";
 import { AppDispatch } from "./redux/store";
+import PrivateRoute from "./components/PrivateRoute";
+
+import "./App.css";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();

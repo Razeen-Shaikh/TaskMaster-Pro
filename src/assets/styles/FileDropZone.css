@@ -1,0 +1,29 @@
+.file-drop-zone {
+  text-align: center;
+  cursor: pointer;
+  color: #1e212a;
+  height: 43px;
+  border-radius: 8px;
+  border: 1px solid #00000021;
+  background: #f1f1f15c;
+  transition: background-color 0.2s ease;
+}
+
+.file-drop-zone p {
+  font-family: Mulish;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.file-drop-zone p span {
+  font-family: Mulish;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  color: #2458f5;
+}
+
+.file-drop-zone.dragging {
+  background-color: #f0f8ff;
+  border-color: #007bff;
+}
