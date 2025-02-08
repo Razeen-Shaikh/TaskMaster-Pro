@@ -177,7 +177,7 @@ export const TaskBoard = () => {
               </div>
             ))
           ) : (
-            <p>No Tasks in Completed</p>
+            <p style={{ textAlign: "center" }}>No Tasks in Completed</p>
           )}
         </div>
       </div>

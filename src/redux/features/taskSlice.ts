@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Task } from "../../api/tasks.data";
+import { formatDisplayDate } from "../../utils/helper";
 
 interface TaskState {
   tasks: Task[];
@@ -24,7 +25,9 @@ const applyFilters = (tasks: Task[], filter: TaskState["filter"]) => {
   return tasks.filter((task) => {
     return (
       (filter.category ? task.category === filter.category : true) &&
-      (filter.dueDate ? task.dueDate === filter.dueDate : true) &&
+      (filter.dueDate
+        ? formatDisplayDate(new Date(task.dueDate)) === filter.dueDate
+        : true) &&
       (filter.tag ? task.tags.includes(filter.tag) : true) &&
       (filter.searchQuery
         ? task.title.toLowerCase().includes(filter.searchQuery.toLowerCase())
@@ -44,6 +47,7 @@ const taskSlice = createSlice({
     setFilter: (state, action: PayloadAction<Partial<TaskState["filter"]>>) => {
       state.filter = { ...state.filter, ...action.payload };
       state.filteredTasks = applyFilters(state.tasks, state.filter);
+      console.log({ filteredTasks: state.filteredTasks });
     },
 
     sortTasks: (state) => {

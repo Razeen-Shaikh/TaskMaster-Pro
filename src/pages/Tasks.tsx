@@ -24,10 +24,17 @@ const Tasks = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState("list");
   const [open, setOpen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     dispatch(setFilter({ searchQuery }));
   }, [searchQuery, dispatch]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
@@ -159,7 +166,7 @@ const Tasks = () => {
           </div>
         </div>
         <div className="sm-tasks">
-          {view === "board" ? <TaskBoard /> : <TaskList />}
+          {view === "board" && !isMobile ? <TaskBoard /> : <TaskList />}
         </div>
       </div>
       {open && <ViewOrEdit onClose={() => setOpen(false)} isCreate={true} />}

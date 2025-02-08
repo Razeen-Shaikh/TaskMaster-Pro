@@ -51,7 +51,6 @@ const INITIAL_TASK: Task = {
 export const TaskList = () => {
   const dispatch = useDispatch();
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
-
   const [sectionVisibility, setSectionVisibility] = useState<{
     todo: boolean;
     inProgress: boolean;
@@ -72,6 +71,8 @@ export const TaskList = () => {
 
   const categorizedTasks = useMemo(() => {
     const tasks = filteredTasks || [];
+
+    console.log({ filteredTasks });
 
     return tasks.reduce(
       (acc, task) => {
@@ -201,6 +202,8 @@ export const TaskList = () => {
       setIsBulkModalOpen(false);
     }
   }, [selectedTasks.size]);
+
+
 
   return (
     <>
