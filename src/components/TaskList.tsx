@@ -450,7 +450,7 @@ export const TaskList = () => {
         </div>
       </Table>
       {open && <ViewOrEdit task={taskInput} onClose={() => setOpen(false)} />}
-      <Modal open={isBulkModalOpen} onClose={() => setIsBulkModalOpen(false)}>
+      <Modal open={isBulkModalOpen}>
         <div className="flex-row align-center">
           <div className="flex-row align-center selcted-tasks-container">
             <div className="selected-tasks flex-row align-center justify-between">

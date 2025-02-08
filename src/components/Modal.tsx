@@ -3,11 +3,10 @@ import "./Modal.css"; // Use appropriate CSS for styling
 
 interface ModalProps {
   open: boolean;
-  onClose: () => void;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ open, children }) => {
   if (!open) return null;
 
   return (
