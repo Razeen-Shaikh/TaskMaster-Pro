@@ -11,13 +11,13 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCHZaD7wwz8mfdiuGUS8q8P44Vu0oF5aNw",
-  authDomain: "task-management-ec1a5.firebaseapp.com",
-  projectId: "task-management-ec1a5",
-  storageBucket: "task-management-ec1a5.firebasestorage.app",
-  messagingSenderId: "121249026637",
-  appId: "1:121249026637:web:6dd2568d5e3a8dc3234204",
-  measurementId: "G-3T96EKLJ79",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

@@ -1,50 +1,74 @@
-# React + TypeScript + Vite
+# Task Managemwnt
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This is a task management web application built with React and Firebase. Users can sign in with Google, manage their tasks (create, edit, delete), and sort/filter them based on various criteria. The app also includes features like task history, file attachments, and responsive design.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Ensure you have the following installed:
 
-- Configure the top-level `parserOptions` property like this:
+- **Node.js**: [Download and install Node.js](https://nodejs.org/)
+- **npm**: npm comes with Node.js, so it will be installed automatically.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Instructions to run the project.
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/TaskMaster-Pro.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Navigate to the project directory:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd TaskMaster-Pro
 ```
+
+3. Install dependencies:
+
+```bash
+npm install
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+This will start the development server, and you can access the app at http://localhost:5173.
+
+### Overview of implemented features.
+
+#### User Authentication
+
+- Google Authentication Setup: Configured Firebase Authentication for seamless Google login. Used Firebase Auth API to manage user sessions.
+- User Profile: Displays user information, including name, email, and profile picture.
+
+#### Task Management
+
+- Task Creation: Users can create new tasks with title, description, due date, category, and tags.
+- Task Editing: Users can edit task details, including title, description, due date, category, and tags.
+- Task Deletion: Users can delete tasks.
+- Task Sorting and Filtering: Users can sort tasks by due date and filter tasks based on category, tags, and due date range.
+- Batch Actions: Users can delete multiple tasks or mark them as complete in bulk.
+- Task History: A history log tracks changes made to tasks, such as status updates and edits.
+- File Attachments: Users can attach files (e.g., documents, images) to tasks.
+
+#### Responsive Design
+
+- Responsive Design: Ensured that the app is mobile-first, using Material UI components and custom CSS to support different screen sizes.
+
+#### Deployment
+
+- Deployment: The app is deployed to Firebase Hosting, a cloud-based platform for hosting static web applications.
+  url: https://task-management-ec1a5.web.app/tasks
+
+### Challenges Faced & Solutions
+
+- Google Authentication Setup: Configured Firebase Authentication for seamless Google login. Used Firebase Auth API to manage user sessions.
+- File Uploads: Used Firebase Storage for handling file uploads and saved the file URLs in Firestore.
+- Responsive Design: Ensured that the app is mobile-first, using Material UI components and custom CSS to support different screen sizes.
