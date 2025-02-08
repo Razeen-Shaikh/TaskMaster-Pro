@@ -11,7 +11,7 @@ import {
 } from "date-fns";
 import { addDays } from "date-fns";
 import { formatDisplayDate } from "../utils/helper";
-import "../assets/styles/Calendar.css";
+import "./styles/Calendar.css";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const YEARS = Array.from({ length: 10 }, (_, i) => getYear(new Date()) - 5 + i);

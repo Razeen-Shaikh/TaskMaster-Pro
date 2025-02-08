@@ -8,17 +8,16 @@ interface TaskState {
   filter: {
     category?: string;
     dueDate?: string;
-    tag?: string;
     searchQuery?: string;
   };
-  sortDirection: "asc" | "desc" | "";
+  sortDirection: "asc" | "desc";
 }
 
 const initialState: TaskState = {
   tasks: [],
   filteredTasks: [],
   filter: {},
-  sortDirection: "",
+  sortDirection: "desc",
 };
 
 const applyFilters = (tasks: Task[], filter: TaskState["filter"]) => {
@@ -28,7 +27,6 @@ const applyFilters = (tasks: Task[], filter: TaskState["filter"]) => {
       (filter.dueDate
         ? formatDisplayDate(new Date(task.dueDate)) === filter.dueDate
         : true) &&
-      (filter.tag ? task.tags.includes(filter.tag) : true) &&
       (filter.searchQuery
         ? task.title.toLowerCase().includes(filter.searchQuery.toLowerCase())
         : true)
@@ -44,34 +42,34 @@ const taskSlice = createSlice({
       state.tasks = action.payload;
       state.filteredTasks = action.payload;
     },
+
     setFilter: (state, action: PayloadAction<Partial<TaskState["filter"]>>) => {
       state.filter = { ...state.filter, ...action.payload };
       state.filteredTasks = applyFilters(state.tasks, state.filter);
-      console.log({ filteredTasks: state.filteredTasks });
     },
 
     sortTasks: (state) => {
-      const sorted = [...state.filteredTasks];
-      if (state.sortDirection === "asc") {
-        sorted.sort(
-          (a, b) =>
-            new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        );
-      } else if (state.sortDirection === "desc") {
-        sorted.sort(
-          (a, b) =>
-            new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
-        );
-      }
-      state.filteredTasks = sorted;
+      const sortedTasks = [...state.filteredTasks];
+      const sortOrder = state.sortDirection === "asc" ? 1 : -1;
+
+      sortedTasks.sort(
+        (a, b) =>
+          sortOrder *
+          (new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+      );
+
+      state.filteredTasks = sortedTasks;
     },
-    setSortDirection: (state, action: PayloadAction<"" | "asc" | "desc">) => {
+
+    setSortDirection: (state, action: PayloadAction<"asc" | "desc">) => {
       state.sortDirection = action.payload;
     },
+
     addTask: (state, action: PayloadAction<Task>) => {
       state.tasks.push(action.payload);
       state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
+
     updateTask: (state, action: PayloadAction<Task>) => {
       const index = state.tasks.findIndex(
         (task) => task.id === action.payload.id
@@ -81,6 +79,7 @@ const taskSlice = createSlice({
         state.filteredTasks = applyFilters(state.tasks, state.filter);
       }
     },
+
     updateTaskStatus: (
       state,
       action: PayloadAction<{ ids: string[]; status: string }>
@@ -99,10 +98,12 @@ const taskSlice = createSlice({
       });
       state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
+
     deleteTask: (state, action: PayloadAction<string>) => {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
+
     bulkDeleteTasks: (state, action: PayloadAction<string[]>) => {
       state.tasks = state.tasks.filter(
         (task) => !action.payload.includes(task.id)

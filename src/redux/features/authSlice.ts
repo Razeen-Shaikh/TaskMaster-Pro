@@ -9,12 +9,16 @@ export interface AuthState {
   } | null;
   isLoading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   isLoading: false,
   error: null,
+  get isAuthenticated() {
+    return this.user !== null;
+  },
 };
 
 const authSlice = createSlice({

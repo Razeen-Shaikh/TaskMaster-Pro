@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../assets/styles/CustomSelect.css";
 import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
+
+import "./styles/CustomSelect.css";
 
 interface CustomSelectProps {
   options: string[];

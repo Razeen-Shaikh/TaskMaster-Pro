@@ -11,15 +11,13 @@ import {
 import { FaCircleCheck } from "react-icons/fa6";
 import { RxDragHandleDots2 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import dummyTasks, { categories, statuses, Task } from "../api/tasks.data";
+import { categories, statuses, Task } from "../api/tasks.data";
 import {
   setSortDirection,
   sortTasks,
   addTask,
   updateTaskStatus,
   deleteTask,
-  setTasks,
-  setFilter,
   bulkDeleteTasks,
 } from "../redux/features/taskSlice";
 import { RootState } from "../redux/store";
@@ -28,10 +26,10 @@ import { CustomSelect } from "./CustomSelect";
 import { Table, TableCell, TableRow } from "./Table";
 import TaskInputRow from "./Table/TaskInputRow";
 import { ViewOrEdit } from "./ViewOrEdit";
-
-import "../assets/styles/TaskList.css";
 import Modal from "./Modal";
 import { MdLibraryAddCheck } from "react-icons/md";
+
+import "./styles/TaskList.css";
 
 const INITIAL_TASK: Task = {
   id: "",
@@ -62,17 +60,16 @@ export const TaskList = () => {
   });
   const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
   const [taskInput, setTaskInput] = useState<Task>(INITIAL_TASK);
+  const [createTaskInput, setCreateTaskInput] = useState<Task>(INITIAL_TASK);
   const [open, setOpen] = useState<boolean>(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState<boolean>(false);
 
-  const { filteredTasks, sortDirection, filter } = useSelector(
+  const { filteredTasks, sortDirection } = useSelector(
     (state: RootState) => state.tasks
   );
 
   const categorizedTasks = useMemo(() => {
     const tasks = filteredTasks || [];
-
-    console.log({ filteredTasks });
 
     return tasks.reduce(
       (acc, task) => {
@@ -95,23 +92,22 @@ export const TaskList = () => {
   }, [filteredTasks]);
 
   const toggleSortDirection = useCallback(() => {
-    const newSortDirection =
-      sortDirection === "asc" ? "desc" : sortDirection === "desc" ? "" : "asc";
+    const newSortDirection = sortDirection === "asc" ? "desc" : "asc";
     dispatch(setSortDirection(newSortDirection));
     dispatch(sortTasks());
   }, [dispatch, sortDirection]);
 
   const addTaskHandler = useCallback(() => {
     if (
-      !taskInput.title ||
-      !taskInput.dueDate ||
-      !taskInput.status ||
-      !taskInput.category
+      !createTaskInput.title ||
+      !createTaskInput.dueDate ||
+      !createTaskInput.status ||
+      !createTaskInput.category
     )
       return;
 
     const newTask = {
-      ...taskInput,
+      ...createTaskInput,
       createdDate: new Date().toISOString(),
       updatedDate: new Date().toISOString(),
       history: [
@@ -124,19 +120,23 @@ export const TaskList = () => {
     };
 
     dispatch(addTask(newTask));
+    dispatch(sortTasks());
     setIsAddingTask(false);
-    setTaskInput(INITIAL_TASK);
-  }, [dispatch, taskInput]);
+    setCreateTaskInput(INITIAL_TASK);
+  }, [dispatch, createTaskInput]);
 
   const cancelHandler = useCallback(() => {
     setIsAddingTask(false);
-    if (taskInput.id) {
+    if (createTaskInput.id) {
       dispatch(
-        updateTaskStatus({ ids: [taskInput.id], status: taskInput.status })
+        updateTaskStatus({
+          ids: [createTaskInput.id],
+          status: createTaskInput.status,
+        })
       );
     }
-    setTaskInput(INITIAL_TASK);
-  }, [dispatch, taskInput]);
+    setCreateTaskInput(INITIAL_TASK);
+  }, [dispatch, createTaskInput]);
 
   const editOrDelete = useCallback(
     (action: string, task: Task) => {
@@ -190,20 +190,10 @@ export const TaskList = () => {
   };
 
   useEffect(() => {
-    if (filter.category || filter.dueDate || filter.tag || filter.searchQuery) {
-      dispatch(setFilter(filter));
-    } else {
-      dispatch(setTasks(dummyTasks));
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
     if (selectedTasks.size === 0) {
       setIsBulkModalOpen(false);
     }
   }, [selectedTasks.size]);
-
-
 
   return (
     <>
@@ -327,13 +317,13 @@ export const TaskList = () => {
                   </TableRow>
                   {isAddingTask && (
                     <TaskInputRow
-                      taskInput={taskInput}
+                      taskInput={createTaskInput}
                       statuses={statuses}
                       categories={categories}
                       onAddTask={addTaskHandler}
                       onCancel={cancelHandler}
                       getMarginBottom={getMarginBottom}
-                      setTaskInput={setTaskInput}
+                      setTaskInput={setCreateTaskInput}
                     />
                   )}
                 </>
@@ -342,7 +332,7 @@ export const TaskList = () => {
                 status as "todo" | "inProgress" | "completed"
               ] &&
                 tasks.map((task, index) => (
-                  <TableRow key={task.id}>
+                  <TableRow key={task.id + index}>
                     <TableCell
                       className="flex-row align-center span-3"
                       style={{

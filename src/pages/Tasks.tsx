@@ -11,10 +11,10 @@ import {
 import { RootState } from "../redux/store";
 import { TiThMenuOutline } from "react-icons/ti";
 import { CiSearch, CiViewBoard } from "react-icons/ci";
-import { setFilter } from "../redux/features/taskSlice";
+import { setFilter, setTasks, sortTasks } from "../redux/features/taskSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import { AuthState } from "../redux/features/authSlice";
-import { categories, dueDates } from "../api/tasks.data";
+import dummyTasks, { categories, dueDates } from "../api/tasks.data";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -35,6 +35,15 @@ const Tasks = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (filter.category || filter.dueDate || filter.searchQuery) {
+      dispatch(setFilter(filter));
+    } else {
+      dispatch(setTasks(dummyTasks));
+    }
+    dispatch(sortTasks());
+  }, [dispatch]);
 
   return (
     <>

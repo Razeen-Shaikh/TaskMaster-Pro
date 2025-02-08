@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import "../assets/styles/FileDropZone.css";
+import "./styles/FileDropZone.css";
 
 interface FileDropZoneProps {
   onFilesAdded: (files: File[]) => void;

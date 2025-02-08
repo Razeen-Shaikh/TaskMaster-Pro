@@ -61,7 +61,9 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <div className="flex-row align-center">
           <CalendarPopup
-            selectedDate={null}
+            selectedDate={
+              taskInput.dueDate ? new Date(taskInput.dueDate) : null
+            }
             onSelect={(date) =>
               setTaskInput({ ...taskInput, dueDate: date.toISOString() })
             }
@@ -77,7 +79,7 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <CustomSelect
           options={statuses}
-          selected={""}
+          selected={taskInput.status}
           onSelect={(value) => setTaskInput({ ...taskInput, status: value })}
           className="flex-row align-center justify-center fa-plus-container"
         >
@@ -89,7 +91,7 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <CustomSelect
           options={categories}
-          selected={""}
+          selected={taskInput.category}
           onSelect={(value) => setTaskInput({ ...taskInput, category: value })}
           className="flex-row align-center justify-center fa-plus-container"
         >

@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { formatDisplayDate } from "../utils/helper";
 
 export interface Task {
@@ -19,10 +18,11 @@ export interface Task {
     details: string;
   }[];
 }
+const generateRandomID = () => Math.random().toString(36).substring(2, 15);
 
 const dummyTasks: Task[] = [
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Complete React Project",
     description: "Finalize the React project and deploy to production.",
     category: "Work",
@@ -47,7 +47,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Write Blog Post",
     description: "Write and publish a technical blog post on Redux Toolkit.",
     category: "Personal",
@@ -72,7 +72,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Grocery Shopping",
     description: "Buy vegetables, fruits, and essentials for the week.",
     category: "Personal",
@@ -97,7 +97,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Prepare Presentation",
     description: "Create slides for the upcoming project review meeting.",
     category: "Work",
@@ -122,7 +122,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Exercise",
     description: "Go for a 30-minute run in the park.",
     category: "Work",
@@ -142,7 +142,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Read a Book",
     description: "Read 'Atomic Habits' by James Clear.",
     category: "Personal",
@@ -162,7 +162,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Team Meeting",
     description: "Attend the weekly team meeting.",
     category: "Work",
@@ -182,7 +182,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Plan Vacation",
     description: "Plan the itinerary for the upcoming vacation.",
     category: "Personal",
@@ -202,7 +202,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Doctor Appointment",
     description: "Visit the doctor for a regular check-up.",
     category: "Work",
@@ -222,7 +222,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Clean the House",
     description: "Do a thorough cleaning of the house.",
     category: "Personal",
@@ -242,7 +242,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Client Presentation",
     description: "Prepare and deliver a presentation to the client.",
     category: "Work",
@@ -262,7 +262,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Update Resume",
     description: "Update the resume with recent job experience.",
     category: "Personal",
@@ -282,7 +282,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Team Building Activity",
     description: "Organize a team building activity for the team.",
     category: "Work",
@@ -302,7 +302,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Pay Bills",
     description: "Pay the monthly utility bills.",
     category: "Personal",
@@ -322,7 +322,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Learn TypeScript",
     description: "Complete an online course on TypeScript.",
     category: "Work",
@@ -342,7 +342,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Family Dinner",
     description: "Organize a family dinner at home.",
     category: "Personal",
@@ -362,7 +362,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Car Maintenance",
     description: "Take the car for regular maintenance.",
     category: "Personal",
@@ -382,7 +382,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Project Kickoff",
     description: "Kickoff meeting for the new project.",
     category: "Work",
@@ -402,7 +402,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Yoga Session",
     description: "Attend a yoga session in the morning.",
     category: "Work",
@@ -422,7 +422,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Code Review",
     description: "Review the code for the new feature implementation.",
     category: "Work",
@@ -442,7 +442,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Learn TypeScript",
     description: "Complete an online course on TypeScript.",
     category: "Work",
@@ -462,7 +462,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Prepare Sprint Report",
     description: "Compile data and prepare the sprint progress report.",
     category: "Work",
@@ -487,7 +487,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Grocery Shopping",
     description:
       "Buy weekly groceries including vegetables and dairy products.",
@@ -508,7 +508,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Workout Session",
     description: "Attend a 1-hour gym session focusing on cardio.",
     category: "Personal",
@@ -533,7 +533,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Read 'Atomic Habits'",
     description: "Read 50 pages of the book 'Atomic Habits' by James Clear.",
     category: "Personal",
@@ -558,7 +558,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Plan Weekend Trip",
     description: "Research and finalize plans for the upcoming weekend trip.",
     category: "Personal",
@@ -578,7 +578,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Review Pull Requests",
     description:
       "Check and provide feedback on open pull requests in the repo.",
@@ -604,7 +604,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Meditation Session",
     description: "Practice mindfulness meditation for 20 minutes.",
     category: "Work",
@@ -624,7 +624,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Fix UI Bugs",
     description: "Resolve UI issues reported by QA in the latest build.",
     category: "Work",
@@ -644,7 +644,7 @@ const dummyTasks: Task[] = [
     ],
   },
   {
-    id: uuid(),
+    id: generateRandomID(),
     title: "Cook Healthy Dinner",
     description: "Prepare a home-cooked healthy meal with fresh ingredients.",
     category: "Personal",
@@ -664,6 +664,14 @@ const dummyTasks: Task[] = [
     ],
   },
 ];
+
+dummyTasks.map((task, index) => {
+  task.id += index;
+  task.createdDate = formatDisplayDate(new Date(task.createdDate));
+  task.updatedDate = formatDisplayDate(new Date(task.updatedDate));
+
+  return task;
+});
 
 export const statuses = Array.from(
   new Set(dummyTasks.map((task) => task.status))

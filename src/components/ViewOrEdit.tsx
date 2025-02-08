@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { statuses, Task } from "../api/tasks.data";
-import { addTask, updateTask } from "../redux/features/taskSlice";
+import { addTask, sortTasks, updateTask } from "../redux/features/taskSlice";
 import { RxCross1, RxCross2 } from "react-icons/rx";
 import { CustomSelect } from "./CustomSelect";
 import { TextEditor } from "./TextEditor";
@@ -55,6 +55,7 @@ export const ViewOrEdit: React.FC<ViewOrEditProps> = ({
     } else {
       dispatch(updateTask(taskInput));
     }
+    dispatch(sortTasks());
     onClose();
   };
 

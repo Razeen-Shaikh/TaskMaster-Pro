@@ -8,19 +8,26 @@ import Home from "./pages/Home";
 import { Profile } from "./pages/Profile";
 import Tasks from "./pages/Tasks";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { monitorAuthState } from "./redux/actions/authActions";
-import { AppDispatch } from "./redux/store";
+import { AppDispatch, RootState } from "./redux/store";
 import PrivateRoute from "./components/PrivateRoute";
 
 import "./App.css";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
   useEffect(() => {
     dispatch(monitorAuthState());
   }, [dispatch]);
+
+  if (isAuthenticated) {
+    return <Navigate to="/tasks" />;
+  }
 
   return (
     <Router>

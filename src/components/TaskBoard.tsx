@@ -1,20 +1,18 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BsThreeDots } from "react-icons/bs";
-import { deleteTask, setFilter, setTasks } from "../redux/features/taskSlice";
-import dummyTasks, { Task } from "../api/tasks.data";
+import { deleteTask } from "../redux/features/taskSlice";
+import { Task } from "../api/tasks.data";
 import { RootState } from "../redux/store";
 import { CustomSelect, ViewOrEdit } from ".";
 import { formatDisplayDate } from "../utils/helper";
-import "../assets/styles/TaskBoard.css";
+import "./styles/TaskBoard.css";
 
 export const TaskBoard = () => {
   const dispatch = useDispatch();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  const { filteredTasks, filter } = useSelector(
-    (state: RootState) => state.tasks
-  );
+  const { filteredTasks } = useSelector((state: RootState) => state.tasks);
 
   const categorizedTasks: {
     "TO-DO": Task[];
@@ -46,14 +44,6 @@ export const TaskBoard = () => {
     [dispatch]
   );
 
-  useEffect(() => {
-    if (filter.category || filter.dueDate || filter.tag || filter.searchQuery) {
-      dispatch(setFilter(filter));
-    } else {
-      dispatch(setTasks(dummyTasks));
-    }
-  }, [dispatch]);
-
   return (
     <div className="task-board">
       <div className="board-column todo-column">
@@ -61,8 +51,8 @@ export const TaskBoard = () => {
           <h4 className="column-title-todo">TO-DO</h4>
         </div>
         <div className="column-body">
-          {categorizedTasks["TO-DO"].map((task) => (
-            <div key={task.id} className="task-card">
+          {categorizedTasks["TO-DO"].map((task, index) => (
+            <div key={task.id + index} className="task-card">
               <div className="card-header">
                 <p
                   className="task-title"
@@ -102,8 +92,8 @@ export const TaskBoard = () => {
           <h4 className="column-title-inprogress">IN-PROGRESS</h4>
         </div>
         <div className="column-body">
-          {categorizedTasks["IN-PROGRESS"].map((task) => (
-            <div key={task.id} className="task-card">
+          {categorizedTasks["IN-PROGRESS"].map((task, index) => (
+            <div key={task.id + index} className="task-card">
               <div className="card-header">
                 <p
                   className="task-title"
@@ -144,8 +134,8 @@ export const TaskBoard = () => {
         </div>
         <div className="column-body">
           {categorizedTasks["COMPLETED"].length ? (
-            categorizedTasks["COMPLETED"].map((task) => (
-              <div key={task.id} className="task-card">
+            categorizedTasks["COMPLETED"].map((task, index) => (
+              <div key={task.id + index} className="task-card">
                 <div className="card-header">
                   <p
                     className="task-title"
