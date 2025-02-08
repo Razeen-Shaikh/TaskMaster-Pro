@@ -12,7 +12,7 @@ export const Logout = () => {
   };
 
   return (
-    <button className="logout" onClick={handleLogout}>
+    <button className="logout cursor-pointer" onClick={handleLogout}>
       <TbLogout2 className="icon" />
       <span>Logout</span>
     </button>

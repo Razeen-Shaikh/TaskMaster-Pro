@@ -18,7 +18,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({ onFilesAdded }) => {
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    e.dataTransfer.dropEffect = "copy"; // Indicates a copy action is allowed.
+    e.dataTransfer.dropEffect = "copy";
     setIsDragging(true);
   };
 

@@ -3,7 +3,7 @@ import { AiOutlineEnter } from "react-icons/ai";
 import { CiCalendarDate } from "react-icons/ci";
 import { TableCell } from "./TableCell";
 import { Task } from "../../api/tasks.data";
-import { CalendarPopup } from "../Calendar/Calendar";
+import { CalendarPopup } from "../Calendar";
 import { CustomSelect } from "../CustomSelect";
 import { FaPlus } from "react-icons/fa";
 
@@ -34,7 +34,6 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
         <input
           type="text"
           placeholder="Task Title"
-          value={taskInput.title}
           onChange={(e) =>
             setTaskInput({ ...taskInput, title: e.target.value })
           }
@@ -62,9 +61,7 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <div className="flex-row align-center">
           <CalendarPopup
-            selectedDate={
-              taskInput.dueDate ? new Date(taskInput.dueDate) : null
-            }
+            selectedDate={null}
             onSelect={(date) =>
               setTaskInput({ ...taskInput, dueDate: date.toISOString() })
             }
@@ -80,7 +77,7 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <CustomSelect
           options={statuses}
-          selected={taskInput.status}
+          selected={""}
           onSelect={(value) => setTaskInput({ ...taskInput, status: value })}
           className="flex-row align-center justify-center fa-plus-container"
         >
@@ -92,7 +89,7 @@ const TaskInputRow: React.FC<TaskInputRowProps> = ({
       >
         <CustomSelect
           options={categories}
-          selected={taskInput.category}
+          selected={""}
           onSelect={(value) => setTaskInput({ ...taskInput, category: value })}
           className="flex-row align-center justify-center fa-plus-container"
         >

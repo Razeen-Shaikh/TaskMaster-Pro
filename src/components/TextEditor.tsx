@@ -8,8 +8,73 @@ import {
   FaStrikethrough,
 } from "react-icons/fa";
 import { FaListCheck } from "react-icons/fa6";
-import "../assets/styles/TextEditor.css";
 import { detectFormatting, formatText, insertList } from "../utils/helper";
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    fontFamily: '"Mulish", sans-serif',
+    maxWidth: "630px",
+    border: "1px solid #00000021",
+    borderRadius: "8px",
+    overflow: "hidden",
+    backgroundColor: "#f1f1f15c",
+    color: "#1e212a",
+    position: "relative",
+  },
+  placeholder: {
+    position: "absolute",
+    top: "15px",
+    left: "15px",
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    color: "#1e212a",
+    pointerEvents: "none",
+    fontSize: "14px",
+    opacity: 0.4,
+  },
+  editor: {
+    width: "630px",
+    height: "123px",
+    padding: "15px",
+    outline: "none",
+    overflow: "auto",
+    fontSize: "14px",
+    fontWeight: 400,
+    textAlign: "left",
+  },
+  footer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px 15px",
+    fontFamily: '"Mulish", sans-serif',
+    fontSize: "12px",
+    fontWeight: 400,
+    textAlign: "left",
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    color: "#1e212a",
+  },
+  button: {
+    padding: "6px",
+    border: "none",
+    borderRadius: "4px",
+    background: "transparent",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    fontFamily: '"Acumin Pro", sans-serif',
+    fontSize: "18px",
+    fontWeight: 400,
+    textAlign: "left",
+    opacity: 0.8,
+  },
+};
+
+const activeButtonStyle = { opacity: 1 };
 
 const ButtonGroup = ({
   onFormat,
@@ -20,36 +85,51 @@ const ButtonGroup = ({
   onInsertList: (ordered: boolean) => void;
   activeFormats: { [key: string]: boolean };
 }) => (
-  <div className="text-editor-header">
+  <div style={styles.header}>
     <button
-      className={`text-editor-button ${activeFormats.b ? "active" : ""}`}
+      style={{
+        ...styles.button,
+        ...(activeFormats.b ? activeButtonStyle : {}),
+      }}
       onClick={() => onFormat("b")}
     >
       <FaBold />
     </button>
     <button
-      className={`text-editor-button ${activeFormats.i ? "active" : ""}`}
+      style={{
+        ...styles.button,
+        ...(activeFormats.i ? activeButtonStyle : {}),
+      }}
       onClick={() => onFormat("i")}
     >
       <FaItalic />
     </button>
     <button
-      className={`text-editor-button ${activeFormats.s ? "active" : ""}`}
+      style={{
+        ...styles.button,
+        ...(activeFormats.s ? activeButtonStyle : {}),
+      }}
       onClick={() => onFormat("s")}
     >
       <FaStrikethrough />
     </button>
-    <button className="text-editor-button">
+    <button style={styles.button}>
       <RxDividerVertical />
     </button>
     <button
-      className={`text-editor-button ${activeFormats.ul ? "active" : ""}`}
+      style={{
+        ...styles.button,
+        ...(activeFormats.ul ? activeButtonStyle : {}),
+      }}
       onClick={() => onInsertList(false)}
     >
       <FaListUl />
     </button>
     <button
-      className={`text-editor-button ${activeFormats.ol ? "active" : ""}`}
+      style={{
+        ...styles.button,
+        ...(activeFormats.ol ? activeButtonStyle : {}),
+      }}
       onClick={() => onInsertList(true)}
     >
       <FaListOl />
@@ -91,13 +171,10 @@ export const TextEditor = ({
   };
 
   useEffect(() => {
-    document.addEventListener("selectionchange", () =>
-      detectFormatting(setActiveFormats)
-    );
+    const selectionChangeHandler = () => detectFormatting(setActiveFormats);
+    document.addEventListener("selectionchange", selectionChangeHandler);
     return () =>
-      document.removeEventListener("selectionchange", () =>
-        detectFormatting(setActiveFormats)
-      );
+      document.removeEventListener("selectionchange", selectionChangeHandler);
   }, []);
 
   useEffect(() => {
@@ -108,20 +185,22 @@ export const TextEditor = ({
   }, [initialContent]);
 
   return (
-    <div className="text-editor-container">
-      {isEmpty && (
-        <div className="text-editor-placeholder">
-          <FaListCheck />
-          <span>Description</span>
-        </div>
-      )}
+    <div style={styles.container}>
+      <div
+        style={{ ...styles.placeholder, display: isEmpty ? "flex" : "none" }}
+      >
+        <FaListCheck />
+        <span>Description</span>
+      </div>
+
       <div
         ref={editorRef}
-        contentEditable="true"
-        className="text-editor"
+        contentEditable={true}
+        style={styles.editor}
         onInput={handleInput}
       ></div>
-      <div className="text-editor-footer">
+
+      <div style={styles.footer}>
         <ButtonGroup
           onFormat={(tag) =>
             formatText(tag, () => detectFormatting(setActiveFormats))
@@ -131,6 +210,7 @@ export const TextEditor = ({
           }
           activeFormats={activeFormats}
         />
+
         <div style={{ opacity: 0.4 }}>
           {charCount}/{maxChars} characters
         </div>

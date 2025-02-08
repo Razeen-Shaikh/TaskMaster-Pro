@@ -1,5 +1,10 @@
 import { isToday, isSameDay, addDays, format } from "date-fns";
 
+/**
+ * Formats a date into a display string.
+ * If the date is today or tomorrow, it shows "Today" or "Tomorrow".
+ * Otherwise, it returns the date in "dd MMM, yyyy" format.
+ */
 export function formatDisplayDate(date: Date): string {
   if (isToday(date)) {
     return "Today";
@@ -12,17 +17,8 @@ export function formatDisplayDate(date: Date): string {
 
 /**
  * Updates the active text formatting state based on the current text selection.
- *
- * This function checks if the selected text is within certain HTML elements
- * (bold, italic, strikethrough, unordered list, ordered list) and updates
- * the `setActiveFormats` state accordingly. It is used to determine which
- * formatting options are currently applied to the text within a text editor.
- *
- * @param setActiveFormats - A React state setter function that updates
- * the active formatting state object, indicating which formatting tags
- * (b, i, s, ul, ol) are currently active within the selected text.
+ * It looks for bold, italic, strikethrough, unordered list, and ordered list in the current selection.
  */
-
 export const detectFormatting = (
   setActiveFormats: React.Dispatch<
     React.SetStateAction<{ [key: string]: boolean }>
@@ -48,14 +44,8 @@ export const detectFormatting = (
 };
 
 /**
- * Applies or removes a given HTML tag from the selected text within a text
- * editor.
- *
- * This function takes a tag name (e.g. "b", "i", "s", "ul", "ol") and a
- * function to detect the current formatting state. It checks if the selected
- * text is already within the given tag, and if so, removes the tag; otherwise,
- * it wraps the selected text in a new tag. It then updates the formatting state
- * using the provided function and blurs the current element.
+ * Applies or removes a given HTML tag from the selected text.
+ * It toggles the formatting by wrapping or unwrapping the selected text.
  */
 export const formatText = (tag: string, detectFormatting: () => void) => {
   const selection = window.getSelection();
@@ -69,8 +59,9 @@ export const formatText = (tag: string, detectFormatting: () => void) => {
       range.commonAncestorContainer.parentElement?.closest(tag);
     if (existingTag) {
       const parent = existingTag.parentNode as HTMLElement;
-      while (existingTag.firstChild)
+      while (existingTag.firstChild) {
         parent.insertBefore(existingTag.firstChild, existingTag);
+      }
       parent.removeChild(existingTag);
     } else {
       const newNode = document.createElement(tag);
@@ -84,14 +75,18 @@ export const formatText = (tag: string, detectFormatting: () => void) => {
 };
 
 /**
- * Inserts an ordered or unordered list into the text editor, depending on the
- * selection position. If the selection is inside a list item, it replaces the
- * parent list with paragraphs. If the selection is not inside a list, it creates
- * a new list with a single list item containing a non-breaking space.
- * @param {boolean} isOrdered - True for an ordered list (OL), false for an unordered list (UL)
- * @param {() => void} updateFormatting - A function to update the UI based on changes to the text formatting
+ * Inserts or toggles an ordered or unordered list at the current selection.
+ *
+ * If the selection is inside a list item (<li>):
+ *   - If the list type matches the requested one, it will remove the list (unwrap into paragraphs).
+ *   - If the list type is different, it will convert the list to the requested type.
+ *
+ * If the selection is not inside a list:
+ *   - It creates a new list at the current cursor position with one list item containing a non-breaking space.
+ *
+ * @param isOrdered - True for an ordered list (<ol>), false for an unordered list (<ul>).
+ * @param updateFormatting - Callback to update the UI formatting state.
  */
-
 export const insertList = (
   isOrdered: boolean,
   updateFormatting: () => void
@@ -102,7 +97,11 @@ export const insertList = (
   const range = selection.getRangeAt(0);
   let listItemElement = range.commonAncestorContainer as HTMLElement;
 
-  while (listItemElement && listItemElement.tagName !== "LI") {
+  while (
+    listItemElement &&
+    listItemElement.tagName !== "LI" &&
+    listItemElement.tagName !== "DIV"
+  ) {
     listItemElement = listItemElement.parentElement as HTMLElement;
   }
 
@@ -113,12 +112,12 @@ export const insertList = (
       parentListElement &&
       (parentListElement.tagName === "OL" || parentListElement.tagName === "UL")
     ) {
-      // Remove list only if it matches the active type
       if (
         (isOrdered && parentListElement.tagName === "OL") ||
         (!isOrdered && parentListElement.tagName === "UL")
       ) {
         const documentFragment = document.createDocumentFragment();
+
         while (parentListElement.firstChild) {
           const listItem = parentListElement.firstChild as HTMLElement;
           if (listItem.tagName === "LI") {
@@ -130,10 +129,9 @@ export const insertList = (
         }
         parentListElement.replaceWith(documentFragment);
         updateFormatting();
-        return; // Exit after removal
+        return;
       }
 
-      // If toggling between OL and UL, convert instead of removing
       const newListElement = document.createElement(isOrdered ? "ol" : "ul");
       while (parentListElement.firstChild) {
         newListElement.appendChild(parentListElement.firstChild);
@@ -144,13 +142,13 @@ export const insertList = (
     }
   }
 
-  // If not inside a list, create a new list
   const listElement = document.createElement(isOrdered ? "ol" : "ul");
   listElement.style.paddingLeft = "20px";
 
   const newListItem = document.createElement("li");
-  newListItem.textContent = "\u00A0"; // Non-breaking space placeholder
+  newListItem.textContent = "\u00A0";
   listElement.appendChild(newListItem);
+
   range.insertNode(listElement);
 
   updateFormatting();

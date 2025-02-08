@@ -1,17 +1,17 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import {
-  FaChevronDown,
-  FaChevronUp,
-  FaPlus,
-  FaSort,
-  FaSortDown,
   FaSortUp,
+  FaSortDown,
+  FaSort,
+  FaChevronUp,
+  FaChevronDown,
+  FaPlus,
 } from "react-icons/fa";
-import { RxDragHandleDots2 } from "react-icons/rx";
 import { FaCircleCheck } from "react-icons/fa6";
-import dummyTasks, { Task } from "../api/tasks.data";
+import { RxDragHandleDots2 } from "react-icons/rx";
+import { useDispatch, useSelector } from "react-redux";
+import dummyTasks, { categories, statuses, Task } from "../api/tasks.data";
 import {
   setSortDirection,
   sortTasks,
@@ -19,6 +19,8 @@ import {
   updateTaskStatus,
   deleteTask,
   setTasks,
+  setFilter,
+  bulkDeleteTasks,
 } from "../redux/features/taskSlice";
 import { RootState } from "../redux/store";
 import { formatDisplayDate } from "../utils/helper";
@@ -26,12 +28,10 @@ import { CustomSelect } from "./CustomSelect";
 import { Table, TableCell, TableRow } from "./Table";
 import TaskInputRow from "./Table/TaskInputRow";
 import { ViewOrEdit } from "./ViewOrEdit";
-import "../assets/styles/TaskList.css";
 
-interface TaskListProps {
-  categories: string[];
-  statuses: string[];
-}
+import "../assets/styles/TaskList.css";
+import Modal from "./Modal";
+import { MdLibraryAddCheck } from "react-icons/md";
 
 const INITIAL_TASK: Task = {
   id: "",
@@ -48,9 +48,9 @@ const INITIAL_TASK: Task = {
   history: [],
 };
 
-export const TaskList = ({ categories, statuses }: TaskListProps) => {
+export const TaskList = () => {
   const dispatch = useDispatch();
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
 
   const [sectionVisibility, setSectionVisibility] = useState<{
     todo: boolean;
@@ -63,25 +63,34 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   });
   const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
   const [taskInput, setTaskInput] = useState<Task>(INITIAL_TASK);
+  const [open, setOpen] = useState<boolean>(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState<boolean>(false);
 
-  const { filteredTasks, sortDirection } = useSelector(
+  const { filteredTasks, sortDirection, filter } = useSelector(
     (state: RootState) => state.tasks
   );
 
-  const categorizedTasks: {
-    todo: Task[];
-    inProgress: Task[];
-    completed: Task[];
-  } = useMemo(() => {
-    return {
-      todo: filteredTasks.filter((task: Task) => task.status === "TO-DO"),
-      inProgress: filteredTasks.filter(
-        (task: Task) => task.status === "IN-PROGRESS"
-      ),
-      completed: filteredTasks.filter(
-        (task: Task) => task.status === "COMPLETED"
-      ),
-    };
+  const categorizedTasks = useMemo(() => {
+    const tasks = filteredTasks || [];
+
+    return tasks.reduce(
+      (acc, task) => {
+        const statusMapping: Record<string, keyof typeof acc> = {
+          "TO-DO": "todo",
+          "IN-PROGRESS": "inProgress",
+          COMPLETED: "completed",
+        };
+
+        const statusKey = statusMapping[task.status];
+
+        if (statusKey) {
+          acc[statusKey].push(task);
+        }
+
+        return acc;
+      },
+      { todo: [], inProgress: [], completed: [] } as Record<string, Task[]>
+    );
   }, [filteredTasks]);
 
   const toggleSortDirection = useCallback(() => {
@@ -93,32 +102,38 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
 
   const addTaskHandler = useCallback(() => {
     if (
-      taskInput.title &&
-      taskInput.dueDate &&
-      taskInput.status &&
-      taskInput.category
-    ) {
-      setTaskInput({
-        ...taskInput,
-        createdDate: new Date().toISOString(),
-        updatedDate: new Date().toISOString(),
-        history: [
-          {
-            date: new Date().toISOString(),
-            action: "CREATED",
-            details: "You created this task",
-          },
-        ],
-      });
-      dispatch(addTask(taskInput));
-      setIsAddingTask(false);
-      setTaskInput(INITIAL_TASK);
-    }
+      !taskInput.title ||
+      !taskInput.dueDate ||
+      !taskInput.status ||
+      !taskInput.category
+    )
+      return;
+
+    const newTask = {
+      ...taskInput,
+      createdDate: new Date().toISOString(),
+      updatedDate: new Date().toISOString(),
+      history: [
+        {
+          date: new Date().toISOString(),
+          action: "CREATED",
+          details: "You created this task",
+        },
+      ],
+    };
+
+    dispatch(addTask(newTask));
+    setIsAddingTask(false);
+    setTaskInput(INITIAL_TASK);
   }, [dispatch, taskInput]);
 
   const cancelHandler = useCallback(() => {
     setIsAddingTask(false);
-    dispatch(updateTaskStatus({ id: taskInput.id, status: taskInput.status }));
+    if (taskInput.id) {
+      dispatch(
+        updateTaskStatus({ ids: [taskInput.id], status: taskInput.status })
+      );
+    }
     setTaskInput(INITIAL_TASK);
   }, [dispatch, taskInput]);
 
@@ -126,8 +141,7 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
     (action: string, task: Task) => {
       if (action.toLowerCase() === "edit") {
         setTaskInput({ ...task });
-        setSelectedTask({ ...task });
-        setIsAddingTask(true);
+        setOpen(true);
       } else if (
         action.toLowerCase() === "delete" &&
         window.confirm("Are you sure you want to delete this task?")
@@ -151,9 +165,42 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
   const getMarginBottom = () =>
     !categorizedTasks.todo.length || !sectionVisibility.todo ? "3rem" : "";
 
+  const toggleTaskSelection = (id: string) => {
+    setSelectedTasks((prev) => {
+      const newSelection = new Set(prev);
+      if (newSelection.has(id)) {
+        newSelection.delete(id);
+      } else {
+        newSelection.add(id);
+      }
+      return newSelection;
+    });
+    setIsBulkModalOpen(true);
+  };
+
+  const bulkDelete = () => {
+    dispatch(bulkDeleteTasks([...selectedTasks]));
+    setSelectedTasks(new Set());
+  };
+
+  const bulkUpdateStatus = (status: string) => {
+    dispatch(updateTaskStatus({ ids: [...selectedTasks], status }));
+    setSelectedTasks(new Set());
+  };
+
   useEffect(() => {
-    dispatch(setTasks(dummyTasks));
+    if (filter.category || filter.dueDate || filter.tag || filter.searchQuery) {
+      dispatch(setFilter(filter));
+    } else {
+      dispatch(setTasks(dummyTasks));
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedTasks.size === 0) {
+      setIsBulkModalOpen(false);
+    }
+  }, [selectedTasks.size]);
 
   return (
     <>
@@ -304,7 +351,12 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                           index === tasks.length - 1 ? "12px" : "",
                       }}
                     >
-                      <input type="checkbox" className="checkbox" />
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        onChange={() => toggleTaskSelection(task.id)}
+                        checked={selectedTasks.has(task.id)}
+                      />
                       <RxDragHandleDots2 className="drag-icon" />
                       <FaCircleCheck
                         className="check-icon"
@@ -348,7 +400,7 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
                         selected={task.status}
                         onSelect={(value) =>
                           dispatch(
-                            updateTaskStatus({ id: task.id, status: value })
+                            updateTaskStatus({ ids: [task.id], status: value })
                           )
                         }
                         hideText={true}
@@ -397,9 +449,45 @@ export const TaskList = ({ categories, statuses }: TaskListProps) => {
           ))}
         </div>
       </Table>
-      {selectedTask && (
-        <ViewOrEdit task={taskInput} onClose={() => setSelectedTask(null)} />
-      )}
+      {open && <ViewOrEdit task={taskInput} onClose={() => setOpen(false)} />}
+      <Modal open={isBulkModalOpen} onClose={() => setIsBulkModalOpen(false)}>
+        <div className="flex-row align-center">
+          <div className="flex-row align-center selcted-tasks-container">
+            <div className="selected-tasks flex-row align-center justify-between">
+              <p>
+                {selectedTasks.size}{" "}
+                {selectedTasks.size === 1 ? "Task" : "Tasks"} Selected
+              </p>
+              <button
+                className="close-btn"
+                onClick={() => {
+                  setIsBulkModalOpen(false);
+                  setSelectedTasks(new Set());
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            <MdLibraryAddCheck className="icon" />
+          </div>
+
+          <div className="flex-row align-center">
+            <CustomSelect
+              options={statuses}
+              selected={taskInput.status}
+              onSelect={(value) => bulkUpdateStatus(value)}
+              hideText={true}
+              className="task-status"
+              direction="top"
+            >
+              Status
+            </CustomSelect>
+            <button onClick={bulkDelete} className="delete-btn">
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

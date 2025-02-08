@@ -1,0 +1,114 @@
+.popup-modal {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-modal-content {
+  height: 52;
+  border-radius: 12px;
+  background: #1a1c20;
+}
+
+.close-btn {
+  width: 15;
+  height: 15;
+}
+
+.popup-modal-body {
+  padding: 10px;
+}
+
+.popup-modal-body button {
+  background-color: transparent;
+  color: white;
+  border: none;
+  /* padding: 10px; */
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.popup-modal-body button:hover {
+  background-color: transparent;
+}
+
+.popup-modal-body .selected-tasks {
+  width: 139;
+  height: 27;
+  border-radius: 12px;
+  border-width: 0.2px;
+  padding-top: 5px;
+  padding-right: 13px;
+  padding-bottom: 5px;
+  padding-left: 13px;
+  gap: 4px;
+  border: 0.2px solid #ffffff;
+}
+
+.popup-modal-body .selected-tasks p {
+  font-family: Mulish;
+  font-weight: 600;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.popup-modal-body .task-status {
+  border-radius: 12px;
+  border-width: 0.2px;
+  padding-top: 5px;
+  padding-right: 13px;
+  padding-bottom: 5px;
+  padding-left: 13px;
+  gap: 4px;
+  background: #8d8a8a24;
+  border: 0.2px solid #ffffff;
+  font-family: Mulish;
+  font-weight: 600;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.popup-modal-body .dropdown-content.top {
+  background: #1a1c20;
+  border: 1px solid #7b198426;
+}
+
+.popup-modal-body .dropdown-content.top a {
+  color: #ffffff;
+}
+
+.popup-modal-body .dropdown-content.top a:hover {
+  background-color: #1a1c20;
+  opacity: 0.5;
+}
+
+.selcted-tasks-container {
+  margin-right: 2rem;
+}
+
+.selcted-tasks-container .icon {
+  color: #ffffffcc;
+}
+
+.popup-modal-body .delete-btn {
+  border-radius: 12px;
+  border-width: 0.2px;
+  padding-top: 5px;
+  padding-right: 13px;
+  padding-bottom: 5px;
+  padding-left: 13px;
+  gap: 4px;
+  background: #ff353524;
+  border: 0.2px solid #e13838;
+  font-family: Mulish;
+  font-weight: 600;
+  font-size: 12px;
+  color: #e13838;
+}

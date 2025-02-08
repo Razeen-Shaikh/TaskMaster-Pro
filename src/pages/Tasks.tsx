@@ -13,28 +13,17 @@ import { TiThMenuOutline } from "react-icons/ti";
 import { CiSearch, CiViewBoard } from "react-icons/ci";
 import { setFilter } from "../redux/features/taskSlice";
 import { IoIosArrowDown } from "react-icons/io";
+import { AuthState } from "../redux/features/authSlice";
+import { categories, dueDates } from "../api/tasks.data";
 
 const Tasks = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { tasks, filter } = useSelector((state: RootState) => state.tasks);
+  const { user } = useSelector((state: RootState) => state.auth as AuthState);
+  const { filter } = useSelector((state: RootState) => state.tasks);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState("list");
-  const [categories, setCategories] = useState<string[]>([]);
-  const [dueDates, setDueDates] = useState<string[]>([]);
-  const [statuses, setStatuses] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-
-  console.log({ open });
-
-  useEffect(() => {
-    setCategories(
-      Array.from(new Set(tasks?.map((task) => task.category))) || []
-    );
-    setDueDates(Array.from(new Set(tasks?.map((task) => task.dueDate))) || []);
-    setStatuses(Array.from(new Set(tasks?.map((task) => task.status))) || []);
-  }, [tasks]);
 
   useEffect(() => {
     dispatch(setFilter({ searchQuery }));
@@ -110,7 +99,6 @@ const Tasks = () => {
             <button
               className="text-uppercase cursor-pointer"
               onClick={() => {
-                console.log({ open });
                 setOpen(true);
               }}
             >
@@ -171,11 +159,7 @@ const Tasks = () => {
           </div>
         </div>
         <div className="sm-tasks">
-          {view === "board" ? (
-            <TaskBoard categories={categories} statuses={statuses} />
-          ) : (
-            <TaskList categories={categories} statuses={statuses} />
-          )}
+          {view === "board" ? <TaskBoard /> : <TaskList />}
         </div>
       </div>
       {open && <ViewOrEdit onClose={() => setOpen(false)} isCreate={true} />}

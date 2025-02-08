@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import { formatDisplayDate } from "../utils/helper";
 
 export interface Task {
   id: string;
@@ -124,7 +125,7 @@ const dummyTasks: Task[] = [
     id: uuid(),
     title: "Exercise",
     description: "Go for a 30-minute run in the park.",
-    category: "Health",
+    category: "Work",
     dueDate: "2025-02-06",
     status: "TO-DO",
     priority: "Medium",
@@ -204,7 +205,7 @@ const dummyTasks: Task[] = [
     id: uuid(),
     title: "Doctor Appointment",
     description: "Visit the doctor for a regular check-up.",
-    category: "Health",
+    category: "Work",
     dueDate: "2025-02-08",
     status: "TO-DO",
     priority: "High",
@@ -404,7 +405,7 @@ const dummyTasks: Task[] = [
     id: uuid(),
     title: "Yoga Session",
     description: "Attend a yoga session in the morning.",
-    category: "Health",
+    category: "Work",
     dueDate: "2025-02-19",
     status: "TO-DO",
     priority: "Medium",
@@ -440,6 +441,228 @@ const dummyTasks: Task[] = [
       },
     ],
   },
+  {
+    id: uuid(),
+    title: "Learn TypeScript",
+    description: "Complete an online course on TypeScript.",
+    category: "Work",
+    dueDate: "2025-02-15",
+    status: "TO-DO",
+    priority: "Medium",
+    tags: ["Learning", "TypeScript"],
+    attachments: [],
+    createdDate: "2025-01-18",
+    updatedDate: "2025-01-18",
+    history: [
+      {
+        date: "2025-01-18",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Prepare Sprint Report",
+    description: "Compile data and prepare the sprint progress report.",
+    category: "Work",
+    dueDate: "2025-02-10",
+    status: "IN-PROGRESS",
+    priority: "High",
+    tags: ["Agile", "Reports"],
+    attachments: [],
+    createdDate: "2025-01-20",
+    updatedDate: "2025-02-01",
+    history: [
+      {
+        date: "2025-01-20",
+        action: "Created",
+        details: "You created this task.",
+      },
+      {
+        date: "2025-02-01",
+        action: "Updated",
+        details: "Changed status to IN-PROGRESS.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Grocery Shopping",
+    description:
+      "Buy weekly groceries including vegetables and dairy products.",
+    category: "Personal",
+    dueDate: "2025-02-08",
+    status: "TO-DO",
+    priority: "Low",
+    tags: ["Errands", "Shopping"],
+    attachments: [],
+    createdDate: "2025-02-05",
+    updatedDate: "2025-02-05",
+    history: [
+      {
+        date: "2025-02-05",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Workout Session",
+    description: "Attend a 1-hour gym session focusing on cardio.",
+    category: "Personal",
+    dueDate: "2025-02-07",
+    status: "COMPLETED",
+    priority: "Medium",
+    tags: ["Fitness", "Health"],
+    attachments: [],
+    createdDate: "2025-02-02",
+    updatedDate: "2025-02-07",
+    history: [
+      {
+        date: "2025-02-02",
+        action: "Created",
+        details: "You created this task.",
+      },
+      {
+        date: "2025-02-07",
+        action: "Completed",
+        details: "Marked task as completed.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Read 'Atomic Habits'",
+    description: "Read 50 pages of the book 'Atomic Habits' by James Clear.",
+    category: "Personal",
+    dueDate: "2025-02-12",
+    status: "IN-PROGRESS",
+    priority: "Medium",
+    tags: ["Reading", "Self-Improvement"],
+    attachments: [],
+    createdDate: "2025-01-25",
+    updatedDate: "2025-02-03",
+    history: [
+      {
+        date: "2025-01-25",
+        action: "Created",
+        details: "You created this task.",
+      },
+      {
+        date: "2025-02-03",
+        action: "Updated",
+        details: "Started reading, status set to IN-PROGRESS.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Plan Weekend Trip",
+    description: "Research and finalize plans for the upcoming weekend trip.",
+    category: "Personal",
+    dueDate: "2025-02-09",
+    status: "TO-DO",
+    priority: "High",
+    tags: ["Travel", "Planning"],
+    attachments: [],
+    createdDate: "2025-02-04",
+    updatedDate: "2025-02-04",
+    history: [
+      {
+        date: "2025-02-04",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Review Pull Requests",
+    description:
+      "Check and provide feedback on open pull requests in the repo.",
+    category: "Work",
+    dueDate: "2025-02-06",
+    status: "IN-PROGRESS",
+    priority: "High",
+    tags: ["Code Review", "GitHub"],
+    attachments: [],
+    createdDate: "2025-02-03",
+    updatedDate: "2025-02-05",
+    history: [
+      {
+        date: "2025-02-03",
+        action: "Created",
+        details: "You created this task.",
+      },
+      {
+        date: "2025-02-05",
+        action: "Updated",
+        details: "Started reviewing pull requests.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Meditation Session",
+    description: "Practice mindfulness meditation for 20 minutes.",
+    category: "Work",
+    dueDate: "2025-02-08",
+    status: "TO-DO",
+    priority: "Low",
+    tags: ["Wellness", "Mental Health"],
+    attachments: [],
+    createdDate: "2025-02-06",
+    updatedDate: "2025-02-06",
+    history: [
+      {
+        date: "2025-02-06",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Fix UI Bugs",
+    description: "Resolve UI issues reported by QA in the latest build.",
+    category: "Work",
+    dueDate: "2025-02-14",
+    status: "TO-DO",
+    priority: "High",
+    tags: ["Bug Fix", "UI"],
+    attachments: [],
+    createdDate: "2025-02-05",
+    updatedDate: "2025-02-05",
+    history: [
+      {
+        date: "2025-02-05",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
+  {
+    id: uuid(),
+    title: "Cook Healthy Dinner",
+    description: "Prepare a home-cooked healthy meal with fresh ingredients.",
+    category: "Personal",
+    dueDate: "2025-02-08",
+    status: "TO-DO",
+    priority: "Medium",
+    tags: ["Cooking", "Healthy Living"],
+    attachments: [],
+    createdDate: "2025-02-06",
+    updatedDate: "2025-02-06",
+    history: [
+      {
+        date: "2025-02-06",
+        action: "Created",
+        details: "You created this task.",
+      },
+    ],
+  },
 ];
 
 export const statuses = Array.from(
@@ -450,6 +673,9 @@ export const categories = Array.from(
 );
 export const tags = Array.from(
   new Set(dummyTasks.map((task) => task.tags.flat()))
+);
+export const dueDates = Array.from(
+  new Set(dummyTasks.map((task) => formatDisplayDate(new Date(task.dueDate))))
 );
 
 export default dummyTasks;

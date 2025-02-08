@@ -10,7 +10,9 @@ interface CustomSelectProps {
   children?: React.ReactNode;
   className?: string;
   hideText?: boolean;
-  editOrDelete: boolean;
+  editOrDelete?: boolean;
+  style?: React.CSSProperties;
+  direction?: string;
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -21,6 +23,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   className = "",
   hideText = false,
   editOrDelete = false,
+  style = {},
+  direction = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -53,14 +57,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   return (
     <div className="custom-select" ref={dropdownRef}>
       <div className="flex-row align-center">
-        <button className={className} onClick={toggleDropdown}>
+        <button className={className} style={style} onClick={toggleDropdown}>
           {children}
         </button>
         {selected && !hideText && <span>{selected}</span>}
       </div>
 
       {isOpen && !editOrDelete && (
-        <div className="dropdown-content">
+        <div className={`dropdown-content ${direction === "top" ? "top" : ""}`}>
           {options.map((option, index) => (
             <a key={index} onClick={() => handleSelect(option)}>
               {option}
@@ -71,8 +75,16 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
       {isOpen && editOrDelete && (
         <div className="dropdown-content">
-          <a onClick={() => handleSelect("Edit")}>
-            <FaEdit /> Edit
+          <a
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+            onClick={() => handleSelect("Edit")}
+          >
+            <FaEdit />
+            <p style={{ marginLeft: "0.5rem" }}>Edit</p>
           </a>
           <a
             style={{
@@ -83,7 +95,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             }}
             onClick={() => handleSelect("Delete")}
           >
-            <FaDeleteLeft /> <p style={{marginLeft: "0.5rem"}}>Delete</p>
+            <FaDeleteLeft />
+            <p style={{ marginLeft: "0.5rem" }}>Delete</p>
           </a>
         </div>
       )}

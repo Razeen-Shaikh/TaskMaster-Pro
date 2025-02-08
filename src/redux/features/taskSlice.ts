@@ -45,6 +45,7 @@ const taskSlice = createSlice({
       state.filter = { ...state.filter, ...action.payload };
       state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
+
     sortTasks: (state) => {
       const sorted = [...state.filteredTasks];
       if (state.sortDirection === "asc") {
@@ -78,24 +79,30 @@ const taskSlice = createSlice({
     },
     updateTaskStatus: (
       state,
-      action: PayloadAction<{ id: string; status: string }>
+      action: PayloadAction<{ ids: string[]; status: string }>
     ) => {
-      const { id, status } = action.payload;
-      const index = state.tasks.findIndex((task) => task.id === id);
-      if (index !== -1) {
-        state.tasks[index].updatedDate = new Date().toISOString();
-        state.tasks[index].history.push({
-          date: new Date().toISOString(),
-          action: "UPDATED",
-          details: `You changed status from ${state.tasks[index].status} to ${status}`,
-        });
-        state.tasks[index].status = status;
-
-        state.filteredTasks = applyFilters(state.tasks, state.filter);
-      }
+      const { ids, status } = action.payload;
+      state.tasks.forEach((task) => {
+        if (ids.includes(task.id)) {
+          task.status = status;
+          task.updatedDate = new Date().toISOString();
+          task.history.push({
+            date: new Date().toISOString(),
+            action: "UPDATED",
+            details: `You changed status to ${status}`,
+          });
+        }
+      });
+      state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
     deleteTask: (state, action: PayloadAction<string>) => {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      state.filteredTasks = applyFilters(state.tasks, state.filter);
+    },
+    bulkDeleteTasks: (state, action: PayloadAction<string[]>) => {
+      state.tasks = state.tasks.filter(
+        (task) => !action.payload.includes(task.id)
+      );
       state.filteredTasks = applyFilters(state.tasks, state.filter);
     },
   },
@@ -110,5 +117,6 @@ export const {
   updateTask,
   updateTaskStatus,
   deleteTask,
+  bulkDeleteTasks,
 } = taskSlice.actions;
 export default taskSlice.reducer;
